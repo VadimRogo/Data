@@ -88,7 +88,7 @@ def Sell(T):
         except Exception as Ext:
             print(Ext)
 
-for i in range(1000):
+for i in range(100000000):
     df = getminutedata('OCEANBUSD', '1m', '100')
     df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
     price = df['Close'][-1]
