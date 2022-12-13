@@ -105,8 +105,8 @@ for i in range(100000000):
         
         print('Cycle number - ', i, df['Close'][-1])
         print(df['RSI'][-1])
-        info = client.get_symbol_info(Coin)
-        print(info)    
+        # info = client.get_symbol_info(Coin)
+        # print(info)    
     time.sleep(60)
 
 
