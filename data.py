@@ -84,7 +84,7 @@ def Sell(T):
                     symbol='OCEANBUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = T['qty'] - T['qty'] / 1000
+                    quantity = T['qty'] - 1
                     )
             T['sold'] = True
             flag = False
@@ -105,7 +105,8 @@ for i in range(100000000):
         
         print('Cycle number - ', i, df['Close'][-1])
         print(df['RSI'][-1])
-    
+        info = client.get_symbol_info(Coin)
+        print(info)    
     time.sleep(60)
 
 
