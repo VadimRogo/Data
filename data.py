@@ -97,7 +97,7 @@ for i in range(100000000):
         df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
         price = df['Close'][-1]
         for j in Tikets:
-            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] > price or j['sellpriceloss'] > price):
+            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] < price or j['sellpriceloss'] > price):
                 Sell(j)
         if flag == False and df['RSI'][-1] < 35:
             Buy(Coin, CoinsQty[Coins.index(Coin)])
