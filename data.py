@@ -2,7 +2,6 @@ from multiprocessing import reduction
 from binance.client import Client
 import matplotlib.pyplot as plt
 import pandas as pd
-import talib
 import ta
 import numpy as np
 import time
