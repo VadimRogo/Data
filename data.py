@@ -96,7 +96,7 @@ for i in range(100000000):
             Sell(j)
     if flag == False and df['RSI'][-1] < 35:
         Buy()
-    print('Cycle number - ', i)
+    print('Cycle number - ', i, df['Close'][-1])
     print(df['RSI'][-1])
     time.sleep(60)
 
