@@ -73,7 +73,7 @@ def Tiket(price, qty):
 
 def Sell(T):
     global Tikets
-    if Tiket['sold'] == False:
+    if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'])
             order = client.create_order(
@@ -82,7 +82,7 @@ def Sell(T):
                     type=Client.ORDER_TYPE_MARKET,
                     quantity = 152
                     )
-            Tiket['sold'] = True
+            T['sold'] = True
             flag = False
         except Exception as Ext:
             print(Ext)
