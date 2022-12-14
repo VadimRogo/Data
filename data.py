@@ -4,14 +4,14 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import ta
 import numpy as np
-import time
+import time, sys, os
 import requests
 
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEANBUSD", "DARBUSD", "ACABUSD"]
-CoinsQty = [133, 26.1, 165]
+Coins = ["OCEAN", "DAR", "ACA", "DGB", "MOB"]
+CoinsQty = [120, 125, 156, 2550, 16.9]
 
 client = Client(key_client, secret)
 
@@ -21,7 +21,7 @@ Tikets = []
 
 CounterOfChances = 0
 BalanceBUSDStart = client.get_asset_balance(asset='BUSD')['free']
-
+balances = []
 def getminutedata(symbol, interval, lookback):
     frame = pd.DataFrame(client.get_historical_klines(symbol,
                                                     interval,
@@ -35,22 +35,19 @@ def getminutedata(symbol, interval, lookback):
 
 
 def getBalanceBUSD():
-    Balance = float(client.get_asset_balance(asset='BUSD')['free'])
+    Balance = client.get_asset_balance(asset='BUSD')['free']
     return Balance
-
-def getCurrentPrice():
-    price = df['Close'][-1]
-    return price
 
 def Buy(Coin, qty):
     global price, flag
     if flag == False:
         try:
+            
+            price = df['Close'][-1]   
             print('Buy - ', price)
-            price = df['Close'][-1]    
             qty = CoinsQty[Coins.index(Coin)]                 
             order = client.create_order(
-                    symbol=Coin,
+                    symbol=Coin+'BUSD',
                     side=Client.SIDE_BUY,
                     type=Client.ORDER_TYPE_MARKET,
                     quantity = qty                 
@@ -63,14 +60,14 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + price * (0.25 / 100)
-    sellpriceloss = price - price * (0.4 / 100)
+    sellpriceprofit = price + price * (0.5 / 100)
+    sellpriceloss = price - price * (0.8 / 100)
     Tik = {
         'symbol' : symbol,
         'price' : price,
         'sellpriceprofit' : sellpriceprofit,
         'sellpriceloss' : sellpriceloss,
-        'qty' : qty - qty * (5 / 100),
+        'qty' : qty,
         'sold' : False,
     }
     Tikets.append(Tik)
@@ -81,41 +78,63 @@ def Sell(T):
     if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'])
+            balance = CoinsQty[Coins.index(T['symbol'])]
+            ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
+            print("ERROR OF BALANCE")
+            print("BALANCE EQUAL - {}, BUT WE HAVE - {}".format(balance, ReallyBalance))
             order = client.create_order(
-                    symbol='OCEANBUSD',
+                    symbol=T['symbol'] + 'BUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = T['qty']
+                    quantity = balance - 1
                     )
             T['sold'] = True
             flag = False
         except Exception as Ext:
             print(Ext)
+def Maketxt():
+    with open('Data.txt', 'a') as f:
+        f.writelines(str(Tikets))
 
-for i in range(100000000):
-    for Coin in Coins:
-        df = getminutedata(Coin, '1m', '100')
-        df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
-        price = df['Close'][-1]
+def main():
+    global df
+    balanceStart = getBalanceBUSD()
+    CounterOfChances = 0
+    for i in range(31415926535):
+        for Coin in Coins:
+            df = getminutedata(Coin+'BUSD', '1m', '100')
+            df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
+            price = df['Close'][-1]
 
 
-        for j in Tikets:
-            if j['sold'] == False:
-                print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'])
-            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] < price or j['sellpriceloss'] > price):
-                Sell(j)
-        if flag == False and df['RSI'][-1] < 35:
-            Buy(Coin, CoinsQty[Coins.index(Coin)])
-        if df['RSI'][-1] < 35:
-            CounterOfChances += 1
-        print(Coin, CoinsQty[Coins.index(Coin)])
-        print('Cycle number - ', i, df['Close'][-1])
-        print('Chances - ', CounterOfChances)
-        print(df['RSI'][-1], '\n')
-        
+            for j in Tikets:
+                if j['sold'] == False and j['symbol'] == Coin:
+                    print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
+                if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= price or j['sellpriceloss'] >= price):
+                    Sell(j)
+                    balanceEnd = getBalanceBUSD()
+                    balances.append(balanceEnd)
+                    print('Balance in start - {}, Balance in End - {}, percents - {}'.format(balanceStart, balanceEnd, float(balanceStart) / float(balanceEnd)))
+            
+            if flag == False and df['RSI'][-1] < 35:
+                Buy(Coin, CoinsQty[Coins.index(Coin)])
+            if df['RSI'][-1] < 35:
+                CounterOfChances += 1
+            
+            print(Coin, CoinsQty[Coins.index(Coin)])
+            print('Cycle number - ', i)
+            print('Chances - ', CounterOfChances)
+            print(df['RSI'][-1], '\n')
+        print('--------------------------')
+        time.sleep(15)
 
-        
 
-   
-    time.sleep(15)
-
+try:
+    main()
+except KeyboardInterrupt:
+    print('Interrupted')
+    Maketxt()
+    try:
+        sys.exit(0)
+    except SystemExit:
+        os._exit(0)
