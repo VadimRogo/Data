@@ -106,7 +106,7 @@ for i in range(100000000):
                 Sell(j)
         if flag == False and df['RSI'][-1] < 35:
             Buy(Coin, CoinsQty[Coins.index(Coin)])
-        if df['RSI'] < 35:
+        if df['RSI'][-1] < 35:
             CounterOfChances += 1
         print(Coin, CoinsQty[Coins.index(Coin)])
         print('Cycle number - ', i, df['Close'][-1])
