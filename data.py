@@ -11,7 +11,7 @@ key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
 Coins = ["OCEANBUSD", "DARBUSD", "ACABUSD"]
-CoinsQty = [133, 26.1, 179]
+CoinsQty = [133, 26.1, 165]
 
 client = Client(key_client, secret)
 
@@ -77,7 +77,7 @@ def Tiket(symbol, price, qty):
     print(Tikets)
 
 def Sell(T):
-    global Tikets
+    global Tikets, flag
     if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'])
@@ -110,7 +110,9 @@ for i in range(100000000):
             CounterOfChances += 1
         print(Coin, CoinsQty[Coins.index(Coin)])
         print('Cycle number - ', i, df['Close'][-1])
+        print('Chances - ', CounterOfChances)
         print(df['RSI'][-1], '\n')
+        
 
         
 
