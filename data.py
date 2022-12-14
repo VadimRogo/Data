@@ -19,6 +19,9 @@ flag = False
 
 Tikets = []
 
+CounterOfChances = 0
+BalanceBUSDStart = client.get_asset_balance(asset='BUSD')['free']
+
 def getminutedata(symbol, interval, lookback):
     frame = pd.DataFrame(client.get_historical_klines(symbol,
                                                     interval,
@@ -60,8 +63,8 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + price * (0.1 / 100)
-    sellpriceloss = price - price * (0.2 / 100)
+    sellpriceprofit = price + price * (0.25 / 100)
+    sellpriceloss = price - price * (0.4 / 100)
     Tik = {
         'symbol' : symbol,
         'price' : price,
@@ -95,11 +98,6 @@ for i in range(100000000):
         df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
         price = df['Close'][-1]
 
-        # Buy(Coin, CoinsQty[Coins.index(Coin)])
-        # for j in Tikets:
-        #     if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] < price or j['sellpriceloss'] > price):
-        #         Sell(j)
-    
 
         for j in Tikets:
             if j['sold'] == False:
@@ -108,15 +106,14 @@ for i in range(100000000):
                 Sell(j)
         if flag == False and df['RSI'][-1] < 35:
             Buy(Coin, CoinsQty[Coins.index(Coin)])
-
+        if df['RSI'] < 35:
+            CounterOfChances += 1
         print(Coin, CoinsQty[Coins.index(Coin)])
         print('Cycle number - ', i, df['Close'][-1])
-        print(df['RSI'][-1])
+        print(df['RSI'][-1], '\n')
+
+        
 
    
     time.sleep(15)
-
-
-
-print(df)
 
