@@ -10,8 +10,8 @@ import requests
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEANBUSD", "DARBUSD"]
-CoinsQty = [133, 26.1]
+Coins = ["OCEANBUSD", "DARBUSD", "ACABUSD"]
+CoinsQty = [133, 26.1, 179]
 
 client = Client(key_client, secret)
 
