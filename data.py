@@ -10,8 +10,8 @@ import requests
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEANBUSD"]
-CoinsQty = [133]
+Coins = ["OCEANBUSD", "DARBUSD"]
+CoinsQty = [133, 26.1]
 
 
 client = Client(key_client, secret)
@@ -31,63 +31,23 @@ def getminutedata(symbol, interval, lookback):
     frame = frame.astype(float)
     return frame
 
-
-def getBalanceBUSD():
-    Balance = float(client.get_asset_balance(asset='BUSD')['free'])
-    return Balance
-
-def getCurrentPrice():
-    price = df['Close'][-1]
-    return price
-
 def Buy(Coin, qty):
     global price, flag
     if flag == False:
         try:
             print('Buy - ', price)
-            price = df['Close'][-1]    
-            qty = 133                 
+            price = df['Close'][-1]
+            qty = CoinsQty[Coins.index(Coin)]
             order = client.create_order(
                     symbol=Coin,
                     side=Client.SIDE_BUY,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = qty                 
+                    quantity = qty      
                     )
             flag = True
             Tiket(Coin, price, qty)
         except Exception as Ext:
             print(Ext)
-
-# def Tiket(symbol, price, qty):
-#     global Tikets
-#     sellpriceprofit = price + price / 100
-#     sellpriceloss = price - price / 100
-#     Tik = {
-#         'symbol' : symbol,
-#         'price' : price,
-#         'sellpriceprofit' : sellpriceprofit,
-#         'sellpriceloss' : sellpriceloss,
-#         'qty' : qty,
-#         'sold' : False,
-#     }
-#     Tikets.append(Tik)
-#     print(Tikets)
-
-
-def Tiket(symbol, price, qty):
-    global Tikets
-    sellpriceprofit = price + price * (0.1 / 100)
-    sellpriceloss = price - price * (0.1 / 100)
-    Tik = {
-        'symbol' : symbol,
-        'price' : price,
-        'sellpriceprofit' : sellpriceprofit,
-        'sellpriceloss' : sellpriceloss,
-        'qty' : qty - 3,
-        'sold' : False,
-    }
-    Tikets.append(Tik)
-    print(Tikets)
 
 def Sell(T):
     global Tikets
@@ -105,24 +65,30 @@ def Sell(T):
         except Exception as Ext:
             print(Ext)
 
+
+
+def Tiket(symbol, price, qty):
+    global Tikets
+    sellpriceprofit = price
+    sellpriceloss = price 
+    Tik = {
+        'symbol' : symbol,
+        'price' : price,
+        'sellpriceprofit' : sellpriceprofit,
+        'sellpriceloss' : sellpriceloss,
+        'qty' : round(qty - qty * 5/100, 1),
+        'sold' : False,
+    }
+    Tikets.append(Tik)
+    print(Tikets)
+
+
 for i in range(100000000):
     for Coin in Coins:
         df = getminutedata(Coin, '1m', '100')
         df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
         price = df['Close'][-1]
-
-        # Buy(Coin, CoinsQty[Coins.index(Coin)])
-        # for j in Tikets:
-        #     if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] < price or j['sellpriceloss'] > price):
-        #         Sell(j)
-    
-
-        for j in Tikets:
-            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] < price or j['sellpriceloss'] > price):
-                Sell(j)
-        if flag == False and df['RSI'][-1] < 35:
-            Buy(Coin, CoinsQty[Coins.index(Coin)])
-
+  
         print(Coin, CoinsQty[Coins.index(Coin)])
         print('Cycle number - ', i, df['Close'][-1])
         print(df['RSI'][-1])
