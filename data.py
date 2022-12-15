@@ -106,7 +106,7 @@ def main():
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
-            df = getminutedata(Coin+'BUSD', '1m', '100')
+            df = getminutedata(Coin+'BUSD', '5m', '100')
             df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
             price = df['Close'][-1]
 
