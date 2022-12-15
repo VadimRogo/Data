@@ -11,9 +11,9 @@ from datetime import datetime
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "ACA", "DGB", "MOB"]
-CoinsQty = [120, 125, 156, 2550, 16.9]
-
+Coins = ["OCEAN", "DAR", "PSG"]
+CoinsQty = [62, 74]
+MinNotions = [1, 1, 100]
 client = Client(key_client, secret)
 
 flag = False
@@ -46,7 +46,7 @@ def Buy(Coin, qty):
             
             price = df['Close'][-1]   
             print('Buy - ', price)
-            qty = CoinsQty[Coins.index(Coin)]                 
+            qty = math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]            
             order = client.create_order(
                     symbol=Coin+'BUSD',
                     side=Client.SIDE_BUY,
@@ -73,29 +73,28 @@ def Tiket(symbol, price, qty):
         'sold' : False,
     }
     Tikets.append(Tik)
-    print(Tikets)
+    # print(Tikets)
 
 def Sell(T):
     global Tikets, flag
     if T['sold'] == False:
         try:
-            print('Sell - ', T['sellpriceprofit'])
-            balance = CoinsQty[Coins.index(T['symbol'])]
+            print('Sell - ', T['sellpriceprofit'], T['sellpriceloss'])
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             order = client.create_order(
                     symbol=T['symbol'] + 'BUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = math.floor(ReallyBalance * 10) 
+                    quantity = math.floor(T['qty'] * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])]  
                     )
             T['sold'] = True
             flag = False
         except Exception as Ext:
             print(Ext)
-            balance = CoinsQty[Coins.index(T['symbol'])]
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             print("ERROR OF BALANCE")
-            print("BALANCE EQUAL - {}, BUT WE HAVE - {}".format(balance, ReallyBalance))
+            print("BUT WE HAVE - {}".format(ReallyBalance))
+            print("AND - ", float(math.floor(ReallyBalance)))
 def Maketxt():
     with open('Data.txt', 'a') as f:
         f.writelines(str(Tikets))
@@ -121,17 +120,15 @@ def main():
                     print('Balance in start - {}, Balance in End - {}, percents - {}'.format(balanceStart, balanceEnd, float(balanceStart) / float(balanceEnd)))
             
             if flag == False and df['RSI'][-1] < 35:
-                Buy(Coin, CoinsQty[Coins.index(Coin)])
+                Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             if df['RSI'][-1] < 35:
                 CounterOfChances += 1
-            
-            print(Coin, CoinsQty[Coins.index(Coin)])
+            print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             print('Cycle number - ', i)
             print('Chances - ', CounterOfChances)
             print(df['RSI'][-1], '\n')
         print('--------------------------')
         time.sleep(15)
-
 
 try:
     main()
