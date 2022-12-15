@@ -5,7 +5,8 @@ import pandas as pd
 import ta
 import numpy as np
 import time, sys, os
-import requests
+import requests, math
+from datetime import datetime
 
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
@@ -63,6 +64,7 @@ def Tiket(symbol, price, qty):
     sellpriceprofit = price + price * (0.5 / 100)
     sellpriceloss = price - price * (0.8 / 100)
     Tik = {
+        'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
         'price' : price,
         'sellpriceprofit' : sellpriceprofit,
@@ -80,18 +82,20 @@ def Sell(T):
             print('Sell - ', T['sellpriceprofit'])
             balance = CoinsQty[Coins.index(T['symbol'])]
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
-            print("ERROR OF BALANCE")
-            print("BALANCE EQUAL - {}, BUT WE HAVE - {}".format(balance, ReallyBalance))
             order = client.create_order(
                     symbol=T['symbol'] + 'BUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = balance - 1
+                    quantity = math.floor(ReallyBalance * 10) 
                     )
             T['sold'] = True
             flag = False
         except Exception as Ext:
             print(Ext)
+            balance = CoinsQty[Coins.index(T['symbol'])]
+            ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
+            print("ERROR OF BALANCE")
+            print("BALANCE EQUAL - {}, BUT WE HAVE - {}".format(balance, ReallyBalance))
 def Maketxt():
     with open('Data.txt', 'a') as f:
         f.writelines(str(Tikets))
