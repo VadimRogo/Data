@@ -61,8 +61,8 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + price * (0.5 / 100)
-    sellpriceloss = price - price * (0.8 / 100)
+    sellpriceprofit = price + price * 0.5
+    sellpriceloss = price - price * 0.8
     Tik = {
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
