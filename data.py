@@ -111,6 +111,7 @@ def main():
 
 
             for j in Tikets:
+                print(j)
                 if j['sold'] == False and j['symbol'] == Coin:
                     print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
                 if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= price or j['sellpriceloss'] >= price):
