@@ -43,7 +43,6 @@ def Buy(Coin, qty):
     global price, flag
     if flag == False:
         try:
-            
             price = df['Close'][-1]   
             print('Buy - ', price)
             qty = math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]            
@@ -61,8 +60,8 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.4
-    sellpriceloss = price - (price / 100) * 0.6 
+    sellpriceprofit = price + (price / 100) * 0.6
+    sellpriceloss = price - (price / 100) * 0.6
     Tik = {
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
@@ -77,6 +76,7 @@ def Tiket(symbol, price, qty):
 
 def Sell(T):
     global Tikets, flag
+    quantity = math.floor(T['qty'] * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])]  
     if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'], T['sellpriceloss'])
@@ -85,7 +85,7 @@ def Sell(T):
                     symbol=T['symbol'] + 'BUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = math.floor(T['qty'] * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])]  
+                    quantity = quantity 
                     )
             T['sold'] = True
             flag = False
