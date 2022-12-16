@@ -46,7 +46,7 @@ def Buy(Coin, qty):
             
             price = df['Close'][-1]   
             print('Buy - ', price)
-            qty = math.floor(20 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]            
+            qty = math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]            
             order = client.create_order(
                     symbol=Coin+'BUSD',
                     side=Client.SIDE_BUY,
@@ -121,11 +121,11 @@ def main():
                     print('Balance in start - {}, Balance in End - {}, percents - {}'.format(balanceStart, balanceEnd, float(balanceStart) / float(balanceEnd)))
             
             if flag == False and df['RSI'][-1] < 35:
-                Buy(Coin, math.floor(20 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+                Buy(Coin, math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             if df['RSI'][-1] < 35:
                 CounterOfChances += 1
             
-            print(Coin, math.floor(20 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+            print(Coin, math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             print('Cycle number - ', i)
             print('Chances - ', CounterOfChances)
             print(df['RSI'][-1], '\n')
