@@ -3,6 +3,7 @@ from binance.client import Client
 import matplotlib.pyplot as plt
 import pandas as pd
 import ta
+import talib
 import numpy as np
 import time, sys, os
 import requests, math
@@ -11,9 +12,8 @@ from datetime import datetime
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "PSG"]
-CoinsQty = [62, 74]
-MinNotions = [1, 1, 100]
+Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST"]
+MinNotions = [1, 1, 100, 1, 10]
 client = Client(key_client, secret)
 
 flag = False
@@ -105,8 +105,10 @@ def main():
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
-            df = getminutedata(Coin+'BUSD', '5m', '100')
+            df = getminutedata(Coin+'BUSD', '1m', '10000')
             df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
+            df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
+            df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
             price = df['Close'][-1]
 
 
@@ -120,7 +122,7 @@ def main():
                     balances.append(balanceEnd)
                     print('Balance in start - {}, Balance in End - {}, percents - {}'.format(balanceStart, balanceEnd, float(balanceStart) / float(balanceEnd)))
             
-            if flag == False and df['RSI'][-1] < 35:
+            if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
                 Buy(Coin, math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             if df['RSI'][-1] < 35:
                 CounterOfChances += 1
