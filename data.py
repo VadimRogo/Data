@@ -130,7 +130,7 @@ def main():
             print('Chances - ', CounterOfChances)
             print(df['RSI'][-1], '\n')
         print('--------------------------')
-        time.sleep(15)
+        time.sleep(60)
 
 try:
     main()
