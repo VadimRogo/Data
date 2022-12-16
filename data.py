@@ -32,9 +32,6 @@ def getminutedata(symbol, interval, lookback):
     frame = frame.set_index('Time')
     frame.index = pd.to_datetime(frame.index, unit='ms')
     frame = frame.astype(float)
-    frame['SMA 30'] = ta.sma(frame['Close'],30)
-    frame['SMA 100'] = ta.sma(frame['Close'],100)
-    macd = ta.macd(frame['Close'])
     return frame
 
 
@@ -125,13 +122,9 @@ def main():
             
             if flag == False and df['RSI'][-1] < 35:
                 Buy(Coin, math.floor(20 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-            if df['RSI'][-1] < 35 and df['SMA 30'] > df['SMA 100']:
+            if df['RSI'][-1] < 35:
                 CounterOfChances += 1
-            if df['SMA 30'] < df['SMA 100'] and flag == True:
-                for j in Tikets:
-                    if j['symbol'] == Coin:
-                        Sell(j)
-
+            
             print(Coin, math.floor(20 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             print('Cycle number - ', i)
             print('Chances - ', CounterOfChances)
