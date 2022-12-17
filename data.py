@@ -12,8 +12,8 @@ from datetime import datetime
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST", "LINK"]
-MinNotions = [1, 1, 100, 1, 10, 100]
+Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST", "LINK", "TRIBE", "AMP", "RAD"]
+MinNotions = [1, 1, 100, 1, 10, 100, 1, 1, 10]
 client = Client(key_client, secret)
 balanceStart = client.get_asset_balance(asset='BUSD')['free']
 flag = False
@@ -66,6 +66,7 @@ def Tiket(symbol, price, qty):
         'qty' : qty,
         'sold' : False,
     }
+    x = pd.DataFrame.from_dict(Tik)
     Tikets.append(Tik)
     # print(Tikets)
 
@@ -92,7 +93,9 @@ def Sell(T):
             print("AND - ", float(math.floor(ReallyBalance)))
 def Maketxt():
     with open('Data.txt', 'a') as f:
-        f.writelines(str(Tikets))
+        f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
+        for T in Tikets:
+            f.writelines("{}, \n".format(T))
 
 def CheckTikets(Coin):
     for j in Tikets:
@@ -103,6 +106,7 @@ def CheckTikets(Coin):
                 CheckBalance()
 
 def CheckBalance():
+    global balances
     balanceEnd = client.get_asset_balance(asset='BUSD')['free']
     balances.append(balanceEnd)
     print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
@@ -113,7 +117,7 @@ def CheckIndicators(Coin):
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
         CounterOfChances += 1
-    
+
 def main():
     global df
     CounterOfChances = 0
