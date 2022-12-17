@@ -113,6 +113,7 @@ def CheckBalance():
 
 def CheckIndicators(Coin):
     global CounterOfChances
+    price = df['Close'][-1]
     if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
@@ -127,8 +128,6 @@ def main():
             df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
             df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
             df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
-            price = df['Close'][-1]
-
             
             CheckTikets(Coin)
             CheckIndicators(Coin)
