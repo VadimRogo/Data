@@ -128,7 +128,7 @@ def main():
             df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
             df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
             df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
-            
+            price = df['Close'][-1]
             CheckTikets(Coin)
             CheckIndicators(Coin)
             
