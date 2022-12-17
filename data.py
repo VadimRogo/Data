@@ -113,7 +113,6 @@ def main():
 
 
             for j in Tikets:
-                print(j)
                 if j['sold'] == False and j['symbol'] == Coin:
                     print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
                 if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= price or j['sellpriceloss'] >= price):
@@ -124,13 +123,12 @@ def main():
             
             if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
                 Buy(Coin, math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-            if df['RSI'][-1] < 35:
+            if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
                 CounterOfChances += 1
             
             print(Coin, math.floor(19 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-            print('Cycle number - ', i)
-            print('Chances - ', CounterOfChances)
-            print(df['RSI'][-1], '\n')
+            print('Cycle number - ', i, 'Chances - ', CounterOfChances)
+            print(df['RSI'][-1], df['Close'][-1], '\n')
         print('--------------------------')
         time.sleep(60)
 
