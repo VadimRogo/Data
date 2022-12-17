@@ -15,7 +15,7 @@ secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST", "LINK"]
 MinNotions = [1, 1, 100, 1, 10, 100]
 client = Client(key_client, secret)
-
+balanceStart = client.get_asset_balance(asset='BUSD')['free']
 flag = False
 
 Tikets = []
@@ -33,11 +33,6 @@ def getminutedata(symbol, interval, lookback):
     frame.index = pd.to_datetime(frame.index, unit='ms')
     frame = frame.astype(float)
     return frame
-
-
-def getBalanceBUSD():
-    Balance = client.get_asset_balance(asset='BUSD')['free']
-    return Balance
 
 def Buy(Coin, qty):
     global price, flag
@@ -99,9 +94,28 @@ def Maketxt():
     with open('Data.txt', 'a') as f:
         f.writelines(str(Tikets))
 
+def CheckTikets(Coin):
+    for j in Tikets:
+            if j['sold'] == False and j['symbol'] == Coin:
+                print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
+            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= price or j['sellpriceloss'] >= price):
+                Sell(j)
+                CheckBalance()
+
+def CheckBalance():
+    balanceEnd = client.get_asset_balance(asset='BUSD')['free']
+    balances.append(balanceEnd)
+    print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
+
+def CheckIndicators(Coin):
+    global CounterOfChances
+    if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+    if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
+        CounterOfChances += 1
+    
 def main():
     global df
-    balanceStart = getBalanceBUSD()
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
@@ -111,20 +125,9 @@ def main():
             df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
             price = df['Close'][-1]
 
-
-            for j in Tikets:
-                if j['sold'] == False and j['symbol'] == Coin:
-                    print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
-                if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= price or j['sellpriceloss'] >= price):
-                    Sell(j)
-                    balanceEnd = getBalanceBUSD()
-                    balances.append(balanceEnd)
-                    print('Balance in start - {}, Balance in End - {}, percents - {}'.format(balanceStart, balanceEnd, float(balanceStart) / float(balanceEnd)))
             
-            if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
-                Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-            if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
-                CounterOfChances += 1
+            CheckTikets(Coin)
+            CheckIndicators(Coin)
             
             print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
             print('Cycle number - ', i, 'Chances - ', CounterOfChances)
