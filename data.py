@@ -12,8 +12,8 @@ from datetime import datetime
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST"]
-MinNotions = [1, 1, 100, 1, 10]
+Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST", "LINK"]
+MinNotions = [1, 1, 100, 1, 10, 100]
 client = Client(key_client, secret)
 
 flag = False
@@ -60,8 +60,8 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.6
-    sellpriceloss = price - (price / 100) * 0.6
+    sellpriceprofit = price + (price / 100) * 0.9
+    sellpriceloss = price - (price / 100) * 0.9
     Tik = {
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
@@ -105,7 +105,7 @@ def main():
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
-            df = getminutedata(Coin+'BUSD', '1m', '10000')
+            df = getminutedata(Coin+'BUSD', '5m', '10000')
             df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
             df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
             df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
