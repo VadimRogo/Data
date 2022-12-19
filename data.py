@@ -14,8 +14,12 @@ secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
 Coins = ["OCEAN", "DAR", "PSG", "REQ", "LINK", "TRIBE", "AMP", "RAD", "BNX", "BTC", "LTC", "ETH", "QNT"]
 MinNotions = [1, 1, 100, 1, 100, 1, 1, 10, 1000, 100000, 1000, 10000, 1000]
-client = Client(key_client, secret)
-balanceStart = client.get_asset_balance(asset='BUSD')['free']
+try:
+    client = Client(key_client, secret)
+    balanceStart = client.get_asset_balance(asset='BUSD')['free']
+except Exception as Ext:
+    print(Ext)
+
 flag = False
 
 Tikets = []
@@ -24,15 +28,18 @@ CounterOfChances = 0
 BalanceBUSDStart = client.get_asset_balance(asset='BUSD')['free']
 balances = []
 def getminutedata(symbol, interval, lookback):
-    frame = pd.DataFrame(client.get_historical_klines(symbol,
-                                                    interval,
-                                                    lookback + 'min ago UTC'))
-    frame = frame.iloc[:,:6]
-    frame.columns = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
-    frame = frame.set_index('Time')
-    frame.index = pd.to_datetime(frame.index, unit='ms')
-    frame = frame.astype(float)
-    return frame
+    try:
+        frame = pd.DataFrame(client.get_historical_klines(symbol,
+                                                        interval,
+                                                        lookback + 'min ago UTC'))
+        frame = frame.iloc[:,:6]
+        frame.columns = ['Time', 'Open', 'High', 'Low', 'Close', 'Volume']
+        frame = frame.set_index('Time')
+        frame.index = pd.to_datetime(frame.index, unit='ms')
+        frame = frame.astype(float)
+        return frame
+    except Exception as Ext:
+        print(Ext)
 
 def Buy(Coin, qty):
     global price, flag
@@ -66,7 +73,6 @@ def Tiket(symbol, price, qty):
         'qty' : qty,
         'sold' : False,
     }
-    x = pd.DataFrame.from_dict(Tik)
     Tikets.append(Tik)
     # print(Tikets)
 
@@ -107,9 +113,12 @@ def CheckTikets(Coin):
 
 def CheckBalance():
     global balances
-    balanceEnd = client.get_asset_balance(asset='BUSD')['free']
-    balances.append(balanceEnd)
-    print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
+    try:
+        balanceEnd = client.get_asset_balance(asset='BUSD')['free']
+        balances.append(balanceEnd)
+        print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
+    except Exception as Ext:
+        print(Ext)
 
 def CheckIndicators(Coin):
     global CounterOfChances
@@ -124,17 +133,20 @@ def main():
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
-            df = getminutedata(Coin+'BUSD', '5m', '10000')
-            df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
-            df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
-            df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
-            price = df['Close'][-1]
-            CheckTikets(Coin)
-            CheckIndicators(Coin)
-            
-            print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-            print('Cycle number - ', i, 'Chances - ', CounterOfChances)
-            print(df['RSI'][-1], df['Close'][-1], '\n')
+            try:
+                df = getminutedata(Coin+'BUSD', '5m', '10000')
+                df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
+                df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
+                df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
+                price = df['Close'][-1]
+                CheckTikets(Coin)
+                CheckIndicators(Coin)
+                
+                print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+                print('Cycle number - ', i, 'Chances - ', CounterOfChances)
+                print(df['RSI'][-1], df['Close'][-1], '\n')
+            except Exception as Ext:
+                print(Ext)
         print('--------------------------')
         time.sleep(60)
 
