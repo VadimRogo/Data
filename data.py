@@ -12,8 +12,8 @@ from datetime import datetime
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "PSG", "REQ", "GHST", "LINK", "TRIBE", "AMP", "RAD"]
-MinNotions = [1, 1, 100, 1, 10, 100, 1, 1, 10]
+Coins = ["OCEAN", "DAR", "PSG", "REQ", "LINK", "TRIBE", "AMP", "RAD"]
+MinNotions = [1, 1, 100, 1, 100, 1, 1, 10]
 client = Client(key_client, secret)
 balanceStart = client.get_asset_balance(asset='BUSD')['free']
 flag = False
