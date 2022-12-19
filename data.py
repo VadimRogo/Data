@@ -55,8 +55,8 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.9
-    sellpriceloss = price - (price / 100) * 0.9
+    sellpriceprofit = price + (price / 100) * 0.15
+    sellpriceloss = price - (price / 100) * 0.4
     Tik = {
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
@@ -124,7 +124,7 @@ def main():
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
-            df = getminutedata(Coin+'BUSD', '5m', '10000')
+            df = getminutedata(Coin+'BUSD', '5m', '5000')
             df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
             df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
             df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
