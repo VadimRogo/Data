@@ -120,6 +120,7 @@ def Sell(T):
             print("BUT WE HAVE - {}".format(ReallyBalance))
             print("AND - ", float(math.floor(ReallyBalance)))
 def Maketxt(T):
+    CheckBalance()
     with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
         f.writelines("{}, \n".format(T))
@@ -170,10 +171,10 @@ def ServerMailConnect():
 
 def main():
     global df, price, CounterOfChances
-    ServerMailConnect()
     for i in range(31415926535):
         for Coin in Coins:
             try:
+                ServerMailConnect()
                 df = getminutedata(Coin+'BUSD', '5m', '10000')
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
