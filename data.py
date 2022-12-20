@@ -7,6 +7,7 @@ import talib
 import numpy as np
 import time, sys, os
 import requests, math
+import smtplib
 from datetime import datetime
 
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
@@ -39,6 +40,10 @@ def getminutedata(symbol, interval, lookback):
         frame = frame.astype(float)
         return frame
     except Exception as Ext:
+        sent_from = gmail_user
+        to = ['mrk.main.03@gmail.com']
+        email_text = "Subject : {} \n \n {}".format("Error in getting data", Ext)
+        server.sendmail(sent_from, to, email_text)
         print(Ext)
 
 def Buy(Coin, qty):
@@ -57,12 +62,16 @@ def Buy(Coin, qty):
             flag = True
             Tiket(Coin, price, qty)
         except Exception as Ext:
+            sent_from = gmail_user
+            to = ['mrk.main.03@gmail.com']
+            email_text = "Subject : {} \n \n {}".format("Error in Buy process", Ext)
+            server.sendmail(sent_from, to, email_text)
             print(Ext)
 
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.15
+    sellpriceprofit = price + (price / 100) * 0.25
     sellpriceloss = price - (price / 100) * 0.4
     Tik = {
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -74,6 +83,14 @@ def Tiket(symbol, price, qty):
         'sold' : False,
     }
     Tikets.append(Tik)
+    if len(Tikets) > 10:
+        sent_from = gmail_user
+        to = ['mrk.main.03@gmail.com']
+        email_text = "Subject : Journal of Tikets \n \n "
+        for Tik in Tikets:
+            email_text += "{} \n".format(Tik)
+        email_text += "Num of chances - {}".format(CounterOfChances)
+        server.sendmail(sent_from, to, email_text)
     # print(Tikets)
 
 def Sell(T):
@@ -90,18 +107,22 @@ def Sell(T):
                     quantity = quantity 
                     )
             T['sold'] = True
+            Maketxt(T)
             flag = False
         except Exception as Ext:
             print(Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
+            sent_from = gmail_user
+            to = ['mrk.main.03@gmail.com']
+            email_text = "Subject : {} \n \n {}".format("Error in Sell process", Ext)
+            server.sendmail(sent_from, to, email_text)
             print("ERROR OF BALANCE")
             print("BUT WE HAVE - {}".format(ReallyBalance))
             print("AND - ", float(math.floor(ReallyBalance)))
-def Maketxt():
+def Maketxt(T):
     with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
-        for T in Tikets:
-            f.writelines("{}, \n".format(T))
+        f.writelines("{}, \n".format(T))
 
 def CheckTikets(Coin):
     for j in Tikets:
@@ -118,19 +139,39 @@ def CheckBalance():
         balances.append(balanceEnd)
         print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
     except Exception as Ext:
+        sent_from = gmail_user
+        to = ['mrk.main.03@gmail.com']
+        email_text = "Subject : {} \n \n {}".format("Error in CheckBalance", Ext)
+        server.sendmail(sent_from, to, email_text)
         print(Ext)
 
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
-    print('SMA 30 = ', df['SMA 30'][-1], 'SMA 100 = ', df['SMA 100'][-1])
+    print('SMA 30 = ', math.floor(df['SMA 30'][-1] * 1000) / 1000, 'SMA 100 = ', math.floor(df['SMA 100'][-1] * 1000) / 1000)
     if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
+        print('All fine')
         CounterOfChances += 1
+
+def ServerMailConnect():
+    global gmail_user, server
+    gmail_user = 'mrk.sender.03@gmail.com'
+    gmail_password = 'fgdyccspculyfkrp'
+
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+    except Exception as Ext:
+        print('Something went wrong Email')
+
+
 
 def main():
     global df, price
+    ServerMailConnect()
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
@@ -149,6 +190,10 @@ def main():
                 print(df['RSI'][-1], df['Close'][-1], '\n')
             except Exception as Ext:
                 print(Ext)
+                sent_from = gmail_user
+                to = ['mrk.main.03@gmail.com']
+                email_text = "Subject : {} \n \n {}".format("Error in main def", Ext)
+                server.sendmail(sent_from, to, email_text)
         print('--------------------------')
         time.sleep(60)
 
