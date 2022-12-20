@@ -152,7 +152,6 @@ def CheckIndicators(Coin):
     if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
-        print('All fine')
         CounterOfChances += 1
 
 def ServerMailConnect():
@@ -170,9 +169,8 @@ def ServerMailConnect():
 
 
 def main():
-    global df, price
+    global df, price, CounterOfChances
     ServerMailConnect()
-    CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
             try:
