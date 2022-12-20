@@ -107,7 +107,7 @@ def CheckTikets(Coin):
     for j in Tikets:
             if j['sold'] == False and j['symbol'] == Coin:
                 print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
-            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= price or j['sellpriceloss'] >= price):
+            if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= df['Close'][-1] or j['sellpriceloss'] >= df['Close'][-1]):
                 Sell(j)
                 CheckBalance()
 
@@ -123,13 +123,14 @@ def CheckBalance():
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
+    print('SMA 30 = ', df['SMA 30'][-1], 'SMA 100 = ', df['SMA 100'][-1])
     if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
         CounterOfChances += 1
 
 def main():
-    global df
+    global df, price
     CounterOfChances = 0
     for i in range(31415926535):
         for Coin in Coins:
@@ -139,9 +140,10 @@ def main():
                 df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
                 df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
                 price = df['Close'][-1]
-                CheckTikets(Coin)
+
                 CheckIndicators(Coin)
-                
+                CheckTikets(Coin)
+
                 print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
                 print('Cycle number - ', i, 'Chances - ', CounterOfChances)
                 print(df['RSI'][-1], df['Close'][-1], '\n')
