@@ -1,4 +1,3 @@
-from multiprocessing import reduction
 from binance.client import Client
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -71,7 +70,7 @@ def Buy(Coin, qty):
 
 def Tiket(symbol, price, qty):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.3
+    sellpriceprofit = price + (price / 100) * 0.2
     sellpriceloss = price - (price / 100) * 0.3
     Tik = {
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -154,7 +153,7 @@ def CheckBalance():
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
-    print('SMA 50 = ', math.floor(df['SMA 15'][-1] * 1000) / 1000, 'SMA 50 = ', math.floor(df['SMA 50'][-1] * 1000) / 1000)
+    print('SMA 50 = ', math.floor(df['SMA 15'][-1] * 1000) / 1000, 'SMA 15 = ', math.floor(df['SMA 50'][-1] * 1000) / 1000)
     if flag == False and df['RSI'][-1] < 35 and df['SMA 15'][-1] > df['SMA 50'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 15'][-1] > df['SMA 50'][-1]:
