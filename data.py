@@ -154,10 +154,10 @@ def CheckBalance():
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
-    print('SMA 30 = ', math.floor(df['SMA 30'][-1] * 1000) / 1000, 'SMA 100 = ', math.floor(df['SMA 100'][-1] * 1000) / 1000)
-    if flag == False and df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
+    print('SMA 50 = ', math.floor(df['SMA 15'][-1] * 1000) / 1000, 'SMA 50 = ', math.floor(df['SMA 50'][-1] * 1000) / 1000)
+    if flag == False and df['RSI'][-1] < 35 and df['SMA 15'][-1] > df['SMA 50'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-    if df['RSI'][-1] < 35 and df['SMA 30'][-1] > df['SMA 100'][-1]:
+    if df['RSI'][-1] < 35 and df['SMA 15'][-1] > df['SMA 50'][-1]:
         CounterOfChances += 1
 
 def ServerMailConnect():
@@ -182,8 +182,8 @@ def main():
                 ServerMailConnect()
                 df = getminutedata(Coin+'BUSD', '5m', '10000')
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
-                df['SMA 30'] = talib.SMA(df['Close'].values,timeperiod = 30)
-                df['SMA 100'] = talib.SMA(df['Close'].values,timeperiod = 100)
+                df['SMA 15'] = talib.SMA(df['Close'].values,timeperiod = 15)
+                df['SMA 50'] = talib.SMA(df['Close'].values,timeperiod = 50)
                 price = df['Close'][-1]
 
                 CheckIndicators(Coin)
