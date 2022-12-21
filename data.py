@@ -205,7 +205,6 @@ try:
     main()
 except KeyboardInterrupt:
     print('Interrupted')
-    Maketxt()
     try:
         sys.exit(0)
     except SystemExit:
