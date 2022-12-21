@@ -81,19 +81,20 @@ def Tiket(symbol, price, qty):
         'sellpriceloss' : sellpriceloss,
         'qty' : qty,
         'sold' : False,
+        'soldbecause' : ""
     }
     Tikets.append(Tik)
-    if len(Tikets) > 10:
+    if len(Tikets) % 10 == 0:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        email_text = "Subject : Journal of Tikets \n \n "
+        email_text = "Subject : Journal of Tikets \n \n Body : "
         for Tik in Tikets:
             email_text += "{} \n".format(Tik)
         email_text += "Num of chances - {}".format(CounterOfChances)
         server.sendmail(sent_from, to, email_text)
     # print(Tikets)
 
-def Sell(T):
+def Sell(T, because):
     global Tikets, flag
     quantity = math.floor(T['qty'] * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])]  
     if T['sold'] == False:
@@ -107,6 +108,7 @@ def Sell(T):
                     quantity = quantity 
                     )
             T['sold'] = True
+            T['soldbecause'] = because
             Maketxt(T)
             flag = False
         except Exception as Ext:
@@ -120,7 +122,7 @@ def Sell(T):
             print("BUT WE HAVE - {}".format(ReallyBalance))
             print("AND - ", float(math.floor(ReallyBalance)))
 def Maketxt(T):
-    CheckBalance()
+    CheckBalance() 
     with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
         f.writelines("{}, \n".format(T))
@@ -130,7 +132,10 @@ def CheckTikets(Coin):
             if j['sold'] == False and j['symbol'] == Coin:
                 print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
             if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= df['Close'][-1] or j['sellpriceloss'] >= df['Close'][-1]):
-                Sell(j)
+                if j('sellpriceprofit' <= df['Close'][-1]):
+                    Sell(j, "profit")
+                else:
+                    Sell(j, "loss")
                 CheckBalance()
 
 def CheckBalance():
