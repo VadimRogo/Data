@@ -72,7 +72,7 @@ def Tiket(symbol, price, qty):
     global Tikets
     sellpriceprofit = price + (price / 100) * 0.2
     sellpriceloss = price - (price / 100) * 0.3
-    Tik = {
+    Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
         'price' : price,
@@ -153,10 +153,10 @@ def CheckBalance():
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
-    print('SMA 50 = ', math.floor(df['SMA 15'][-1] * 1000) / 1000, 'SMA 15 = ', math.floor(df['SMA 50'][-1] * 1000) / 1000)
-    if flag == False and df['RSI'][-1] < 35 and df['SMA 15'][-1] > df['SMA 50'][-1]:
+    print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
+    if flag == False and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-    if df['RSI'][-1] < 35 and df['SMA 15'][-1] > df['SMA 50'][-1]:
+    if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
 
 def ServerMailConnect():
@@ -179,10 +179,10 @@ def main():
         for Coin in Coins:
             try:
                 ServerMailConnect()
-                df = getminutedata(Coin+'BUSD', '5m', '10000')
+                df = getminutedata(Coin+'BUSD', '1m', '10000')
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
-                df['SMA 15'] = talib.SMA(df['Close'].values,timeperiod = 15)
-                df['SMA 50'] = talib.SMA(df['Close'].values,timeperiod = 50)
+                df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
+                df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
                 price = df['Close'][-1]
 
                 CheckIndicators(Coin)
@@ -198,7 +198,7 @@ def main():
                 email_text = "Subject : {} \n \n {}".format("Error in main def", Ext)
                 server.sendmail(sent_from, to, email_text)
         print('--------------------------')
-        time.sleep(60)
+        time.sleep(30)
 
 try:
     main()
