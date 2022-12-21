@@ -132,7 +132,7 @@ def CheckTikets(Coin):
             if j['sold'] == False and j['symbol'] == Coin:
                 print("Waiting - ", j['sellpriceprofit'], " ", j['sellpriceloss'], "Now price is - ", df['Close'][-1])
             if j['symbol'] == Coin and j['sold'] == False and (j['sellpriceprofit'] <= df['Close'][-1] or j['sellpriceloss'] >= df['Close'][-1]):
-                if j('sellpriceprofit' <= df['Close'][-1]):
+                if (j['sellpriceprofit'] <= df['Close'][-1]):
                     Sell(j, "profit")
                 else:
                     Sell(j, "loss")
