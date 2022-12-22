@@ -8,6 +8,7 @@ import time, sys, os
 import requests, math
 import smtplib
 from datetime import datetime
+from email.message import EmailMessage
 
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
@@ -41,9 +42,16 @@ def getminutedata(symbol, interval, lookback):
     except Exception as Ext:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        email_text = "Subject : {} \n \n {}".format("Error in getting data", Ext)
-        server.sendmail(sent_from, to, email_text)
-        print(Ext)
+        content = Ext
+
+        msg = EmailMessage()
+        msg['Subject'] = "Error in Getting data process"
+        msg['From'] = sent_from
+        msg['To'] = to
+        
+        msg.set_content(content)
+        server.send_message(msg)
+
 
 def Buy(Coin, qty):
     global price, flag
@@ -63,9 +71,16 @@ def Buy(Coin, qty):
         except Exception as Ext:
             sent_from = gmail_user
             to = ['mrk.main.03@gmail.com']
-            email_text = "Subject : {} \n \n {}".format("Error in Buy process", Ext)
-            server.sendmail(sent_from, to, email_text)
-            print(Ext)
+            content = Ext
+
+            msg = EmailMessage()
+            msg['Subject'] = "Error in Buy process"
+            msg['From'] = sent_from
+            msg['To'] = to
+            
+            msg.set_content(content)
+            server.send_message(msg)
+
 
 
 def Tiket(symbol, price, qty):
@@ -82,15 +97,21 @@ def Tiket(symbol, price, qty):
         'sold' : False,
         'soldbecause' : ""
     }
+
     Tikets.append(Tik)
+
     if len(Tikets) % 10 == 0:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        email_text = "Subject : Journal of Tikets \n \n Body : "
-        for Tik in Tikets:
-            email_text += "{} \n".format(Tik)
-        email_text += "Num of chances - {}".format(CounterOfChances)
-        server.sendmail(sent_from, to, email_text)
+        for T in Tikets:
+            content += "{} \n".format(T)
+
+        msg = EmailMessage()
+        msg['Subject'] = "Tikets journal"
+        msg['From'] = sent_from
+        msg['To'] = to
+        msg.set_content(content)
+        server.send_message(msg)
     # print(Tikets)
 
 def Sell(T, because):
@@ -113,10 +134,20 @@ def Sell(T, because):
         except Exception as Ext:
             print(Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
+            
             sent_from = gmail_user
             to = ['mrk.main.03@gmail.com']
-            email_text = "Subject : {} \n \n {}".format("Error in Sell process", Ext)
-            server.sendmail(sent_from, to, email_text)
+            content = Ext
+
+            msg = EmailMessage()
+            msg['Subject'] = "Error in Sell process"
+            msg['From'] = sent_from
+            msg['To'] = to
+            
+            msg.set_content(content)
+            server.send_message(msg)
+
+
             print("ERROR OF BALANCE")
             print("BUT WE HAVE - {}".format(ReallyBalance))
             print("AND - ", float(math.floor(ReallyBalance)))
@@ -146,9 +177,15 @@ def CheckBalance():
     except Exception as Ext:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        email_text = "Subject : {} \n \n {}".format("Error in CheckBalance", Ext)
-        server.sendmail(sent_from, to, email_text)
-        print(Ext)
+        content = Ext
+
+        msg = EmailMessage()
+        msg['Subject'] = "Error in Check Balance process"
+        msg['From'] = sent_from
+        msg['To'] = to
+        
+        msg.set_content(content)
+        server.send_message(msg)
 
 def CheckIndicators(Coin):
     global CounterOfChances
@@ -195,8 +232,15 @@ def main():
                 print(Ext)
                 sent_from = gmail_user
                 to = ['mrk.main.03@gmail.com']
-                email_text = "Subject : {} \n \n {}".format("Error in main def", Ext)
-                server.sendmail(sent_from, to, email_text)
+                content = Ext
+
+                msg = EmailMessage()
+                msg['Subject'] = "Error in Buy process"
+                msg['From'] = sent_from
+                msg['To'] = to
+                
+                msg.set_content(content)
+                server.send_message(msg)
         print('--------------------------')
         time.sleep(30)
 
