@@ -9,6 +9,8 @@ import requests, math
 import smtplib
 from datetime import datetime
 from email.message import EmailMessage
+from talib import stream
+
 
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
@@ -167,6 +169,19 @@ def CheckTikets(Coin):
                     Sell(j, "loss")
                 CheckBalance()
 
+
+def stoch(Coin):
+    sma = talib.SMA(df["Close"], timeperiod=14)
+    latest = stream.SMA(df["Close"], timeperiod=14)
+    assert (sma[-1] - latest) < 0.00001
+
+    fastk, fastd = talib.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+    f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+    
+    assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
+    if fastk[-1] >  80:
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+
 def CheckBalance():
     global balances
     try:
@@ -189,6 +204,7 @@ def CheckBalance():
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
+    stoch(Coin)
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
     if (True in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CheckPermission('Buy')
@@ -234,6 +250,7 @@ def main():
                 price = df['Close'][-1]
 
                 CheckIndicators(Coin)
+                
                 CheckTikets(Coin)
 
                 print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
