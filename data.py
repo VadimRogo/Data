@@ -15,8 +15,8 @@ from talib import stream
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "REQ", "LINK", "TRIBE", "AMP", "RAD", "BNX", "BTC", "LTC", "ETH", "QNT", "LTC", "KNC", "DOGE", "QNT"]
-MinNotions = [1, 1, 1, 100, 1, 1, 10, 1000, 100000, 1000, 10000, 1000, 1000, 10, 1, 1000]
+Coins = ["OCEAN", "DAR", "LINK", "TRIBE", "AMP", "RAD", "BTC", "LTC", "ETH", "QNT", "LTC", "KNC", "DOGE", "QNT"]
+MinNotions = [1, 1, 100, 1, 1, 10, 100000, 1000, 10000, 1000, 1000, 10, 1, 1000]
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
@@ -56,31 +56,30 @@ def getminutedata(symbol, interval, lookback):
 
 
 def Buy(Coin, qty, type):
-    global price, flag
-    if flag == False:
-        try:
-            price = df['Close'][-1]   
-            print('Buy - ', price)        
-            order = client.create_order(
-                    symbol=Coin+'BUSD',
-                    side=Client.SIDE_BUY,
-                    type=Client.ORDER_TYPE_MARKET,
-                    quantity = qty                 
-                    )
-            flag = True
-            Tiket(Coin, price, qty, type)
-        except Exception as Ext:
-            sent_from = gmail_user
-            to = ['mrk.main.03@gmail.com']
-            content = str(Ext)
+    global price
+    try:
+        price = df['Close'][-1]   
+        print('Buy - ', price)        
+        order = client.create_order(
+                symbol=Coin+'BUSD',
+                side=Client.SIDE_BUY,
+                type=Client.ORDER_TYPE_MARKET,
+                quantity = qty                 
+                )
+        Tiket(Coin, price, qty, type)
+    except Exception as Ext:
+        CheckBalance()
+        sent_from = gmail_user
+        to = ['mrk.main.03@gmail.com']
+        content = str(Ext)
 
-            msg = EmailMessage()
-            msg['Subject'] = "Error in Buy process"
-            msg['From'] = sent_from
-            msg['To'] = to
-            
-            msg.set_content(content)
-            server.send_message(msg)
+        msg = EmailMessage()
+        msg['Subject'] = "Error in Buy process"
+        msg['From'] = sent_from
+        msg['To'] = to
+        
+        msg.set_content(content)
+        server.send_message(msg)
 
 
 
@@ -117,7 +116,7 @@ def Tiket(symbol, price, qty, type):
     # print(Tikets)
 
 def Sell(T, because):
-    global Tikets, flag
+    global Tikets
     quantity = math.floor(T['qty'] * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])]  
     if T['sold'] == False:
         try:
@@ -180,8 +179,11 @@ def stoch(Coin):
     f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
     
     assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
-    if fastk[-1] > 80 and fastk[-1] < 90:
+    
+    if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
+        print('Stoch trying to buy')
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
+        CheckPermission('Buy')
 
 def CheckBalance():
     global balances
@@ -207,9 +209,9 @@ def CheckIndicators(Coin):
     price = df['Close'][-1]
     stoch(Coin)
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
-    if (True in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
-        CheckPermission('Buy')
+    if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
+        CheckPermission('Buy')
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
 
@@ -271,7 +273,7 @@ def main():
                 msg.set_content(content)
                 server.send_message(msg)
         print('--------------------------')
-        time.sleep(30)
+        time.sleep(60)
 
 try:
     main()
