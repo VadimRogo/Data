@@ -171,19 +171,33 @@ def CheckTikets(Coin):
 
 
 def stoch(Coin):
-    sma = talib.SMA(df["Close"], timeperiod=14)
-    latest = stream.SMA(df["Close"], timeperiod=14)
-    assert (sma[-1] - latest) < 0.00001
+    try: 
+        sma = talib.SMA(df["Close"], timeperiod=14)
+        latest = stream.SMA(df["Close"], timeperiod=14)
+        assert (sma[-1] - latest) < 0.00001
 
-    fastk, fastd = talib.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
-    f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
-    
-    assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
-    
-    if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
-        print('Stoch trying to buy')
-        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
-        CheckPermission('Buy')
+        fastk, fastd = talib.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+        f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
+        
+        assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
+        
+        if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
+            print('Stoch trying to buy')
+            Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
+            CheckPermission('Buy')
+    except Exception as Ext:
+        sent_from = gmail_user
+        to = ['mrk.main.03@gmail.com']
+        content = "" + str(Ext)
+
+        msg = EmailMessage()
+        msg['Subject'] = "Error in Stoch process"
+        msg['From'] = sent_from
+        msg['To'] = to
+        
+        msg.set_content(content)
+        server.send_message(msg)
+
 
 def CheckBalance():
     global balances
