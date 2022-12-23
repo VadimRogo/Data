@@ -185,6 +185,7 @@ def stoch(Coin):
             print('Stoch trying to buy')
             Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
             CheckPermission('Buy')
+            
     except Exception as Ext:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
