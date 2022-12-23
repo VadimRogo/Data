@@ -117,7 +117,7 @@ def Tiket(symbol, price, qty, type):
 
 def Sell(T, because):
     global Tikets
-    quantity = math.floor(T['qty'] * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])]  
+    quantity = T['qty'] 
     if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'], T['sellpriceloss'])
