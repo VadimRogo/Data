@@ -55,7 +55,7 @@ def getminutedata(symbol, interval, lookback):
         server.send_message(msg)
 
 
-def Buy(Coin, qty):
+def Buy(Coin, qty, type):
     global price, flag
     if flag == False:
         try:
@@ -68,7 +68,7 @@ def Buy(Coin, qty):
                     quantity = qty                 
                     )
             flag = True
-            Tiket(Coin, price, qty)
+            Tiket(Coin, price, qty, type)
         except Exception as Ext:
             sent_from = gmail_user
             to = ['mrk.main.03@gmail.com']
@@ -84,7 +84,7 @@ def Buy(Coin, qty):
 
 
 
-def Tiket(symbol, price, qty):
+def Tiket(symbol, price, qty, type):
     global Tikets
     sellpriceprofit = price + (price / 100) * 0.25
     sellpriceloss = price - (price / 100) * 0.15
@@ -96,7 +96,8 @@ def Tiket(symbol, price, qty):
         'sellpriceloss' : sellpriceloss,
         'qty' : qty,
         'sold' : False,
-        'soldbecause' : ""
+        'soldbecause' : "",
+        'type' : type
     }
 
     Tikets.append(Tik)
@@ -180,7 +181,7 @@ def stoch(Coin):
     
     assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
     if fastk[-1] > 80 and fastk[-1] < 90:
-        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
 
 def CheckBalance():
     global balances
@@ -208,7 +209,7 @@ def CheckIndicators(Coin):
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
     if (True in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CheckPermission('Buy')
-        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
 
