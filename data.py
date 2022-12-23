@@ -179,7 +179,7 @@ def stoch(Coin):
     f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
     
     assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
-    if fastk[-1] >  80:
+    if fastk[-1] > 80 and fastk[-1] < 90:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
 
 def CheckBalance():
