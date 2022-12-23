@@ -71,7 +71,7 @@ def Buy(Coin, qty, type):
         CheckBalance()
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        content = str(Ext)
+        content = "BUY ERROR - "str(Ext)
 
         msg = EmailMessage()
         msg['Subject'] = "Error in Buy process"
