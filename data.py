@@ -178,18 +178,16 @@ def stoch(Coin):
 
         fastk, fastd = talib.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
         f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
-        
-        assert (fastk[-1] - f) < 5#64.32089013974793 59.52628987038199
-        
+                
         if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
             print('Stoch trying to buy')
             Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
             CheckPermission('Buy')
-            
+
     except Exception as Ext:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        content = "" + str(Ext)
+        content = str(Ext)
 
         msg = EmailMessage()
         msg['Subject'] = "Error in Stoch process"
@@ -233,7 +231,7 @@ def CheckIndicators(Coin):
 def ServerMailConnect():
     global gmail_user, server
     gmail_user = 'mrk.sender.03@gmail.com'
-    gmail_password = 'fgdyccspculyfkrp'
+    gmail_password = 'wtnipkdbyijsrujz'
 
     try:
         server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
