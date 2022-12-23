@@ -13,16 +13,16 @@ from email.message import EmailMessage
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "REQ", "LINK", "TRIBE", "AMP", "RAD", "BNX", "BTC", "LTC", "ETH", "QNT"]
-MinNotions = [1, 1, 1, 100, 1, 1, 10, 1000, 100000, 1000, 10000, 1000]
+Coins = ["OCEAN", "DAR", "REQ", "LINK", "TRIBE", "AMP", "RAD", "BNX", "BTC", "LTC", "ETH", "QNT", "LTC", "KNC", "DOGE", "QNT"]
+MinNotions = [1, 1, 1, 100, 1, 1, 10, 1000, 100000, 1000, 10000, 1000, 1000, 10, 1, 1000]
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
 except Exception as Ext:
     print(Ext)
 
-flag = False
 
+Per = [False, False, False, False, False]
 Tikets = []
 
 CounterOfChances = 0
@@ -42,7 +42,7 @@ def getminutedata(symbol, interval, lookback):
     except Exception as Ext:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        content = Ext
+        content = str(Ext)
 
         msg = EmailMessage()
         msg['Subject'] = "Error in Getting data process"
@@ -58,8 +58,7 @@ def Buy(Coin, qty):
     if flag == False:
         try:
             price = df['Close'][-1]   
-            print('Buy - ', price)
-            qty = math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]            
+            print('Buy - ', price)        
             order = client.create_order(
                     symbol=Coin+'BUSD',
                     side=Client.SIDE_BUY,
@@ -71,7 +70,7 @@ def Buy(Coin, qty):
         except Exception as Ext:
             sent_from = gmail_user
             to = ['mrk.main.03@gmail.com']
-            content = Ext
+            content = str(Ext)
 
             msg = EmailMessage()
             msg['Subject'] = "Error in Buy process"
@@ -130,14 +129,14 @@ def Sell(T, because):
             T['sold'] = True
             T['soldbecause'] = because
             Maketxt(T)
-            flag = False
+            CheckPermission('Sell')
         except Exception as Ext:
             print(Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             
             sent_from = gmail_user
             to = ['mrk.main.03@gmail.com']
-            content = Ext
+            content = str(Ext)
 
             msg = EmailMessage()
             msg['Subject'] = "Error in Sell process"
@@ -177,7 +176,7 @@ def CheckBalance():
     except Exception as Ext:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        content = Ext
+        content = str(Ext)
 
         msg = EmailMessage()
         msg['Subject'] = "Error in Check Balance process"
@@ -191,7 +190,8 @@ def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
-    if flag == False and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
+    if (True in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
+        CheckPermission('Buy')
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
@@ -208,7 +208,18 @@ def ServerMailConnect():
     except Exception as Ext:
         print('Something went wrong Email')
 
-
+def CheckPermission(Operation):
+    global Per
+    if Operation == 'Buy':
+        for x in range(5):
+            if Per[x] == False:
+                Per[x] = True
+                break
+    elif Operation == 'Sell':
+        for x in range(5):
+            if Per[x] == True:
+                Per[x] = False
+                break
 
 def main():
     global df, price, CounterOfChances
@@ -232,7 +243,7 @@ def main():
                 print(Ext)
                 sent_from = gmail_user
                 to = ['mrk.main.03@gmail.com']
-                content = Ext
+                content = str(Ext)
 
                 msg = EmailMessage()
                 msg['Subject'] = "Error in Buy process"
