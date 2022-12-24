@@ -103,9 +103,11 @@ def Tiket(symbol, price, qty, type):
     if len(Tikets) % 10 == 0:
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
+        content = ""
         for T in Tikets:
             content += "{} \n".format(T)
-
+        content += " \n \n \n \n \n "
+        content += Tikets
         msg = EmailMessage()
         msg['Subject'] = "Tikets journal"
         msg['From'] = sent_from
