@@ -52,8 +52,7 @@ def getminutedata(symbol, interval, lookback):
         msg['To'] = to
         
         msg.set_content(content)
-        server.send_message(msg)
-
+        server.send_message(msg, from_addr=sent_from, to_addrs=to)
 
 def Buy(Coin, qty, type):
     global price
@@ -79,7 +78,7 @@ def Buy(Coin, qty, type):
         msg['To'] = to
         
         msg.set_content(content)
-        server.send_message(msg)
+        server.send_message(msg, from_addr=sent_from, to_addrs=to)
 
 
 
@@ -112,7 +111,7 @@ def Tiket(symbol, price, qty, type):
         msg['From'] = sent_from
         msg['To'] = to
         msg.set_content(content)
-        server.send_message(msg)
+        server.send_message(msg, from_addr=sent_from, to_addrs=to)
     # print(Tikets)
 
 def Sell(T, because):
@@ -146,7 +145,7 @@ def Sell(T, because):
                 msg['To'] = to
                 
                 msg.set_content(content)
-                server.send_message(msg)
+                server.send_message(msg, from_addr=sent_from, to_addrs=to)
 
 
                 print("ERROR OF BALANCE")
@@ -197,7 +196,7 @@ def stoch(Coin):
         msg['To'] = to
         
         msg.set_content(content)
-        server.send_message(msg)
+        server.send_message(msg, from_addr=sent_from, to_addrs=to)
 
 
 def CheckBalance():
@@ -217,7 +216,7 @@ def CheckBalance():
         msg['To'] = to
         
         msg.set_content(content)
-        server.send_message(msg)
+        server.send_message(msg, from_addr=sent_from, to_addrs=to)
 
 def CheckIndicators(Coin):
     global CounterOfChances
@@ -286,7 +285,7 @@ def main():
                 msg['To'] = to
                 
                 msg.set_content(content)
-                server.send_message(msg)
+                server.send_message(msg, from_addr=sent_from, to_addrs=to)
         print('--------------------------')
         time.sleep(60)
 
