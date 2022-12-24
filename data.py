@@ -135,23 +135,25 @@ def Sell(T, because):
         except Exception as Ext:
             print(Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
-            
-            sent_from = gmail_user
-            to = ['mrk.main.03@gmail.com']
-            content = str(Ext)
+            try:
+                sent_from = gmail_user
+                to = ['mrk.main.03@gmail.com']
+                content = str(Ext)
 
-            msg = EmailMessage()
-            msg['Subject'] = "Error in Sell process"
-            msg['From'] = sent_from
-            msg['To'] = to
-            
-            msg.set_content(content)
-            server.send_message(msg)
+                msg = EmailMessage()
+                msg['Subject'] = "Error in Sell process"
+                msg['From'] = sent_from
+                msg['To'] = to
+                
+                msg.set_content(content)
+                server.send_message(msg)
 
 
-            print("ERROR OF BALANCE")
-            print("BUT WE HAVE - {}".format(ReallyBalance))
-            print("AND - ", float(math.floor(ReallyBalance)))
+                print("ERROR OF BALANCE")
+                print("BUT WE HAVE - {}".format(ReallyBalance))
+                print("AND - ", float(math.floor(ReallyBalance)))
+            except Exception as Ext:
+                print(Ext)
 def Maketxt(T):
     CheckBalance() 
     with open('Data.txt', 'a') as f:
