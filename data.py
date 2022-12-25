@@ -107,7 +107,6 @@ def Tiket(symbol, price, qty, type):
         for T in Tikets:
             content += "{} \n".format(T)
         content += " \n \n \n \n \n "
-        content += str(Tikets)
         msg = EmailMessage()
         msg['Subject'] = "Tikets journal"
         msg['From'] = sent_from
@@ -156,9 +155,24 @@ def Sell(T, because):
             except Exception as Ext:
                 print(Ext)
 def Maketxt(T):
-    CheckBalance() 
+    CheckBalance()
+    for T in Tikets:
+        if T['soldbecause'] == 'profit' and T['type'] == 'RSI':
+            CounterProfitRSI += 1
+        elif T['soldbecaise'] == 'loss' and T['type'] == 'RSI':
+            CounterLossRSI += 1
+        if T['soldbecause'] == 'profit' and T['type'] == 'Stoch':
+            CounterProfitStoch += 1
+        elif T['soldbecaise'] == 'loss' and T['type'] == 'Stoch':
+            CounterLossStoch += 1
+
+        KpdRSI = CounterProfitRSI / CounterLossRSI
+        KpdStoch = CounterProfitStoch / CounterLossStoch
+
+
     with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
+        f.writeline('kpd of Rsi - {} kpd of Stoch - {}'.format(kpdRSI, kpdSrtoch))
         f.writelines("{}, \n".format(T))
 
 def CheckTikets(Coin):

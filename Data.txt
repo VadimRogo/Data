@@ -1,0 +1,1 @@
+Balance start - 55.97114083, Balance end of work - 55.92194403{'time': '2022-12-25 14:37', 'symbol': 'RAD', 'price': 1.693, 'sellpriceprofit': 1.6972325000000001, 'sellpriceloss': 1.6904605000000001, 'qty': 6.4, 'sold': True, 'soldbecause': 'loss', 'type': 'Stoch'}, 
