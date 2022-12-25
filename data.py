@@ -107,7 +107,7 @@ def Tiket(symbol, price, qty, type):
         for T in Tikets:
             content += "{} \n".format(T)
         content += " \n \n \n \n \n "
-        content += Tikets
+        content += str(Tikets)
         msg = EmailMessage()
         msg['Subject'] = "Tikets journal"
         msg['From'] = sent_from
