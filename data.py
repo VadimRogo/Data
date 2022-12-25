@@ -174,6 +174,7 @@ def CheckTikets(Coin):
 
 
 def stoch(Coin):
+    global CounterOfChances
     try: 
         sma = talib.SMA(df["Close"], timeperiod=14)
         latest = stream.SMA(df["Close"], timeperiod=14)
@@ -186,6 +187,8 @@ def stoch(Coin):
             print('Stoch trying to buy')
             Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
             CheckPermission('Buy')
+        if fastk[-1] > 80 and fastk[-1] < 90:
+            CounterOfChances += 1
 
     except Exception as Ext:
         sent_from = gmail_user
