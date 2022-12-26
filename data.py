@@ -84,7 +84,7 @@ def Buy(Coin, qty, type):
 
 def Tiket(symbol, price, qty, type):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.25
+    sellpriceprofit = price + (price / 100) * 0.15
     sellpriceloss = price - (price / 100) * 0.15
     Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -160,11 +160,11 @@ def Maketxt(T):
     for T in Tikets:
         if T['soldbecause'] == 'profit' and T['type'] == 'RSI':
             CounterProfitRSI += 1
-        elif T['soldbecaise'] == 'loss' and T['type'] == 'RSI':
+        elif T['soldbecause'] == 'loss' and T['type'] == 'RSI':
             CounterLossRSI += 1
         if T['soldbecause'] == 'profit' and T['type'] == 'Stoch':
             CounterProfitStoch += 1
-        elif T['soldbecaise'] == 'loss' and T['type'] == 'Stoch':
+        elif T['soldbecause'] == 'loss' and T['type'] == 'Stoch':
             CounterLossStoch += 1
 
         KpdRSI = CounterProfitRSI / CounterLossRSI
