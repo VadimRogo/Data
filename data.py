@@ -15,8 +15,8 @@ from talib import stream
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
 
-Coins = ["OCEAN", "DAR", "LINK", "TRIBE", "AMP", "RAD", "LTC", "QNT", "KNC", "DOGE"]
-MinNotions = [1, 1, 100, 1, 1, 10, 1000, 1000, 10, 1]
+Coins = ["OCEAN", "DAR", "LINK", "TRIBE", "AMP", "RAD", "LTC", "QNT", "KNC", "DOGE", "MIR", "AKRO", "ANC", "TORN"]
+MinNotions = [1, 1, 100, 1, 1, 10, 1000, 1000, 10, 1, 1000, 1000, 1000, 1000]
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
