@@ -19,8 +19,8 @@ CounterLossStoch = 0
 CounterLossRSI =- 0
 CounterLossRSI = 0
 CounterProfitStoch = 0
-Coins = ["OCEAN", "DAR", "LINK", "TRIBE", "AMP", "RAD", "LTC", "QNT", "KNC", "DOGE", "MIR", "AKRO", "ANC", "TORN"]
-MinNotions = [1, 1, 100, 1, 1, 10, 1000, 1000, 1000, 1, 1000, 1000, 1000, 1000]
+Coins = ["OCEAN", "DAR", "LINK", "TRIBE", "AMP", "RAD", "LTC", "QNT", "KNC", "MIR", "AKRO", "ANC", "TORN"]
+MinNotions = [1, 1, 100, 1, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
