@@ -177,7 +177,7 @@ def Maketxt(T):
 
     with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
-        f.writeline('kpd of Rsi - {} kpd of Stoch - {}'.format(KpdRSI, KpdStoch))
+        f.writelines('kpd of Rsi - {} kpd of Stoch - {}'.format(KpdRSI, KpdStoch))
         f.writelines("{}, \n".format(T))
 
 def CheckTikets(Coin):
