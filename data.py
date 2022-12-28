@@ -27,7 +27,7 @@ except Exception as Ext:
     print(Ext)
 
 
-Per = [False, False, False, False, False]
+Per = [False, False, False, False]
 Tikets = []
 
 CounterOfChances = 0
@@ -268,12 +268,12 @@ def ServerMailConnect():
 def CheckPermission(Operation):
     global Per
     if Operation == 'Buy':
-        for x in range(5):
+        for x in range(4):
             if Per[x] == False:
                 Per[x] = True
                 break
     elif Operation == 'Sell':
-        for x in range(5):
+        for x in range(4):
             if Per[x] == True:
                 Per[x] = False
                 break
