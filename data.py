@@ -14,11 +14,10 @@ from talib import stream
 
 key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
 secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
-CounterProfitRSI = 0
-CounterLossStoch = 0
-CounterLossRSI =- 0
-CounterLossRSI = 0
-CounterProfitStoch = 0
+CounterProfitRSI = 1
+CounterLossStoch = 1
+CounterLossRSI = 1
+CounterProfitStoch = 1
 Coins = ["OCEAN", "DAR", "LINK", "TRIBE", "AMP", "RAD", "LTC", "QNT", "KNC", "MIR", "AKRO", "ANC", "TORN"]
 MinNotions = [1, 1, 100, 1, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
 try:
@@ -161,6 +160,7 @@ def Sell(T, because):
 def Maketxt(T):
     global CounterProfitRSI, CounterLossRSI, CounterProfitStoch, CounterLossStoch, kpdRSI, KpdStoch
     CheckBalance()
+    
     for T in Tikets:
         if T['soldbecause'] == 'profit' and T['type'] == 'RSI':
             CounterProfitRSI += 1
