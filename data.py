@@ -80,7 +80,6 @@ def Buy(Coin, qty, type):
         msg['From'] = sent_from
         msg['To'] = to
         
-        msg.set_content(content)
         server.send_message(msg, from_addr=sent_from, to_addrs=to)
 
 
