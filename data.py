@@ -18,8 +18,8 @@ CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
 CounterProfitStoch = 1
-Coins = ["OCEAN", "DAR", "LINK", "AMP", "RAD", "LTC", "QNT", "KNC", "MIR", "AKRO", "ANC", "TORN"]
-MinNotions = [1, 1, 100, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000, 1000]
+Coins = ["OCEAN", "DAR", "LINK", "AMP", "RAD", "LTC", "QNT", "MIR", "AKRO", "ANC", "TORN"]
+MinNotions = [1, 1, 100, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000]
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
@@ -71,23 +71,19 @@ def Buy(Coin, qty, type):
         Tiket(Coin, price, qty, type)
     except Exception as Ext:
         CheckBalance()
+        print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
         sent_from = gmail_user
         to = ['mrk.main.03@gmail.com']
-        content = "BUY ERROR - " + str(Ext)
-
         msg = EmailMessage()
         msg['Subject'] = "Error in Buy process"
         msg['From'] = sent_from
         msg['To'] = to
-        
         server.send_message(msg, from_addr=sent_from, to_addrs=to)
-
-
 
 def Tiket(symbol, price, qty, type):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.15
-    sellpriceloss = price - (price / 100) * 0.15
+    sellpriceprofit = price + (price / 100) * 0.25
+    sellpriceloss = price - (price / 100) * 0.25
     Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
@@ -119,7 +115,8 @@ def Tiket(symbol, price, qty, type):
 
 def Sell(T, because):
     global Tikets
-    quantity = (math.floor(T['qty'] - (T['qty'] / 1000) * MinNotions[Coins.index(T['symbol'])])) / MinNotions[Coins.index(T['symbol'])]
+    Balance = client.get_asset_balance(asset=T['symbol'])['free']
+    quantity = float(math.floor(float(Balance) * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])])
     if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'], T['sellpriceloss'])
@@ -141,7 +138,7 @@ def Sell(T, because):
                 sent_from = gmail_user
                 to = ['mrk.main.03@gmail.com']
                 content = str(Ext)
-
+                print(quantity, " -- Quantity")
                 msg = EmailMessage()
                 msg['Subject'] = "Error in Sell process"
                 msg['From'] = sent_from
@@ -190,7 +187,6 @@ def CheckTikets(Coin):
                     Sell(j, "loss")
                 CheckBalance()
 
-
 def stoch(Coin):
     global CounterOfChances
     try: 
@@ -203,7 +199,7 @@ def stoch(Coin):
                 
         if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
             print('Stoch trying to buy')
-            Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
+            Buy(Coin, float(math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]), 'Stoch')
             CheckPermission('Buy')
         if fastk[-1] > 80 and fastk[-1] < 90:
             CounterOfChances += 1
@@ -283,7 +279,7 @@ def main():
         for Coin in Coins:
             try:
                 ServerMailConnect()
-                df = getminutedata(Coin+'BUSD', '1m', '10000')
+                df = getminutedata(Coin+'BUSD', '5m', '10000')
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
                 df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
@@ -303,7 +299,7 @@ def main():
                 content = str(Ext)
 
                 msg = EmailMessage()
-                msg['Subject'] = "Error in Buy process"
+                msg['Subject'] = "Error in main process"
                 msg['From'] = sent_from
                 msg['To'] = to
                 
