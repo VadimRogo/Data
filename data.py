@@ -83,8 +83,8 @@ def Buy(Coin, qty, type):
 
 def Tiket(symbol, price, qty, type):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.25
-    sellpriceloss = price - (price / 100) * 0.25
+    sellpriceprofit = price + (price / 100) * 0.15
+    sellpriceloss = price - (price / 100) * 0.15
     Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
@@ -201,7 +201,7 @@ def stoch(Coin):
                 
         if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
             print('Stoch trying to buy')
-            Buy(Coin, float(math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]), 'Stoch')
+            Buy(Coin, 10, 'Stoch')
             CheckPermission('Buy')
         if fastk[-1] > 80 and fastk[-1] < 90:
             CounterOfChances += 1
@@ -281,7 +281,7 @@ def main():
         for Coin in Coins:
             try:
                 ServerMailConnect()
-                df = getminutedata(Coin+'BUSD', '5m', '10000')
+                df = getminutedata(Coin+'BUSD', '1m', '10000')
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
                 df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
