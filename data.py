@@ -123,7 +123,7 @@ def Maketxt(T):
         KpdStoch = CounterProfitStoch / CounterLossStoch
 
 
-    with open('Data.txt', 'w') as f:
+    with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
         f.writelines("Was {} deals RSI and {} deals Stoch".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch))
         f.writelines('kpd of Rsi - {} kpd of Stoch - {}'.format(KpdRSI, KpdStoch))
