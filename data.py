@@ -18,8 +18,8 @@ CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
 CounterProfitStoch = 1
-Coins = ["OCEAN", "DAR", "AMP"]
-MinNotions = [1, 1, 1]
+Coins = ["OCEAN", "DAR", "AMP", "DOGE", "GMT"]
+MinNotions = [1, 1, 1, 1, 10]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
 try:
     client = Client(key_client, secret)
