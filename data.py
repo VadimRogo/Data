@@ -67,9 +67,9 @@ def Buy(Coin, qty, type):
                 symbol=Coin+'BUSD',
                 side=Client.SIDE_BUY,
                 type=Client.ORDER_TYPE_MARKET,
-                quantity = Qty[Coin.index(Coin)]                 
+                quantity = Qty[Coins.index(Coin)]                 
                 )
-        Tiket(Coin, price, Qty[Coin.index(Coin)], type)
+        Tiket(Coin, price, Qty[Coins.index(Coin)], type)
     except Exception as Ext:
         CheckBalance()
         print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
@@ -202,6 +202,7 @@ def stoch(Coin):
         if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
             print('Stoch trying to buy')
             Buy(Coin, 10, 'Stoch')
+            print('Bouth')
             CheckPermission('Buy')
         if fastk[-1] > 80 and fastk[-1] < 90:
             CounterOfChances += 1
