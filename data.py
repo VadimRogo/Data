@@ -18,8 +18,9 @@ CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
 CounterProfitStoch = 1
-Coins = ["OCEAN", "DAR", "AMP", "RAD", "LTC", "QNT", "MIR", "AKRO", "ANC", "TORN"]
-MinNotions = [1, 1, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000]
+Coins = ["OCEAN", "DAR", "AMP", "RAD", "LTC", "QNT", "MIR", "AKRO", "ANC", "TORN", "SLP", "HOOK", "MASK", "DOGE"]
+MinNotions = [1, 1, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000, 100, 1, 1, 1]
+Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
@@ -66,9 +67,9 @@ def Buy(Coin, qty, type):
                 symbol=Coin+'BUSD',
                 side=Client.SIDE_BUY,
                 type=Client.ORDER_TYPE_MARKET,
-                quantity = qty                 
+                quantity = Qty[Coin.index(Coin)]                 
                 )
-        Tiket(Coin, price, qty, type)
+        Tiket(Coin, price, Qty[Coin.index(Coin)], type)
     except Exception as Ext:
         CheckBalance()
         print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
@@ -117,6 +118,7 @@ def Sell(T, because):
     global Tikets
     Balance = client.get_asset_balance(asset=T['symbol'])['free']
     quantity = float(math.floor(float(Balance) * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])])
+    Coin = T['symbol']
     if T['sold'] == False:
         try:
             print('Sell - ', T['sellpriceprofit'], T['sellpriceloss'])
@@ -125,7 +127,7 @@ def Sell(T, because):
                     symbol=T['symbol'] + 'BUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity = quantity 
+                    quantity =  Qty[Coin.index(Coin)]
                     )
             T['sold'] = True
             T['soldbecause'] = because
