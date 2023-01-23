@@ -125,7 +125,7 @@ def Maketxt(T):
 
     with open('Data.txt', 'w') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
-        f.writelines("Was {} deals ")
+        f.writelines("Was {} deals RSI and {} deals Stoch".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch))
         f.writelines('kpd of Rsi - {} kpd of Stoch - {}'.format(KpdRSI, KpdStoch))
         f.writelines("{}, \n".format(T))
 
