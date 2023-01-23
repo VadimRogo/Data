@@ -18,8 +18,8 @@ CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
 CounterProfitStoch = 1
-Coins = ["OCEAN", "DAR", "AMP", "RAD", "LTC", "QNT", "MIR", "AKRO", "ANC", "TORN", "SLP", "HOOK", "MASK", "DOGE"]
-MinNotions = [1, 1, 1, 10, 1000, 1000, 1000, 1000, 1000, 1000, 100, 1, 1, 1]
+Coins = ["OCEAN", "DAR", "AMP"]
+MinNotions = [1, 1, 1]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
 try:
     client = Client(key_client, secret)
@@ -67,9 +67,9 @@ def Buy(Coin, qty, type):
                 symbol=Coin+'BUSD',
                 side=Client.SIDE_BUY,
                 type=Client.ORDER_TYPE_MARKET,
-                quantity = Qty[Coins.index(Coin)]                 
+                quantity = qty         
                 )
-        Tiket(Coin, price, Qty[Coins.index(Coin)], type)
+        Tiket(Coin, price, qty, type)
     except Exception as Ext:
         CheckBalance()
         print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
@@ -127,7 +127,7 @@ def Sell(T, because):
                     symbol=T['symbol'] + 'BUSD',
                     side=Client.SIDE_SELL,
                     type=Client.ORDER_TYPE_MARKET,
-                    quantity =  Qty[Coin.index(Coin)]
+                    quantity = quantity
                     )
             T['sold'] = True
             T['soldbecause'] = because
