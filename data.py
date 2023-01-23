@@ -46,18 +46,7 @@ def getminutedata(symbol, interval, lookback):
         frame = frame.astype(float)
         return frame
     except Exception as Ext:
-        sent_from = gmail_user
-        to = ['mrk.main.03@gmail.com']
-        content = str(Ext)
-
-        msg = EmailMessage()
-        msg['Subject'] = "Error in Getting data process"
-        msg['From'] = sent_from
-        msg['To'] = to
-        
-        msg.set_content(content)
-        server.send_message(msg, from_addr=sent_from, to_addrs=to)
-
+        print(Ext)
 def Buy(Coin, qty, type):
     global price
     try:
@@ -73,14 +62,7 @@ def Buy(Coin, qty, type):
     except Exception as Ext:
         CheckBalance()
         print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
-        sent_from = gmail_user
-        to = ['mrk.main.03@gmail.com']
-        msg = EmailMessage()
-        msg['Subject'] = "Error in Buy process"
-        msg['From'] = sent_from
-        msg['To'] = to
-        server.send_message(msg, from_addr=sent_from, to_addrs=to)
-
+        print(Ext)
 def Tiket(symbol, price, qty, type):
     global Tikets
     sellpriceprofit = price + (price / 100) * 0.15
@@ -96,22 +78,8 @@ def Tiket(symbol, price, qty, type):
         'soldbecause' : "",
         'type' : type
     }
-
+    
     Tikets.append(Tik)
-
-    if len(Tikets) % 10 == 0:
-        sent_from = gmail_user
-        to = ['mrk.main.03@gmail.com']
-        content = ""
-        for T in Tikets:
-            content += "{} \n".format(T)
-        content += " \n \n \n \n \n "
-        msg = EmailMessage()
-        msg['Subject'] = "Tikets journal"
-        msg['From'] = sent_from
-        msg['To'] = to
-        msg.set_content(content)
-        server.send_message(msg, from_addr=sent_from, to_addrs=to)
     # print(Tikets)
 
 def Sell(T, because):
@@ -136,25 +104,7 @@ def Sell(T, because):
         except Exception as Ext:
             print(Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
-            try:
-                sent_from = gmail_user
-                to = ['mrk.main.03@gmail.com']
-                content = str(Ext)
-                print(quantity, " -- Quantity")
-                msg = EmailMessage()
-                msg['Subject'] = "Error in Sell process"
-                msg['From'] = sent_from
-                msg['To'] = to
-                
-                msg.set_content(content)
-                server.send_message(msg, from_addr=sent_from, to_addrs=to)
-
-
-                print("ERROR OF BALANCE")
-                print("BUT WE HAVE - {}".format(ReallyBalance))
-                print("AND - ", float(math.floor(ReallyBalance)))
-            except Exception as Ext:
-                print(Ext)
+            
 def Maketxt(T):
     global CounterProfitRSI, CounterLossRSI, CounterProfitStoch, CounterLossStoch, kpdRSI, KpdStoch
     CheckBalance()
@@ -173,8 +123,9 @@ def Maketxt(T):
         KpdStoch = CounterProfitStoch / CounterLossStoch
 
 
-    with open('Data.txt', 'a') as f:
+    with open('Data.txt', 'w') as f:
         f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
+        f.writelines("Was {} deals ")
         f.writelines('kpd of Rsi - {} kpd of Stoch - {}'.format(KpdRSI, KpdStoch))
         f.writelines("{}, \n".format(T))
 
@@ -208,18 +159,7 @@ def stoch(Coin):
             CounterOfChances += 1
 
     except Exception as Ext:
-        sent_from = gmail_user
-        to = ['mrk.main.03@gmail.com']
-        content = str(Ext)
-
-        msg = EmailMessage()
-        msg['Subject'] = "Error in Stoch process"
-        msg['From'] = sent_from
-        msg['To'] = to
-        
-        msg.set_content(content)
-        server.send_message(msg, from_addr=sent_from, to_addrs=to)
-
+        print(Ext)
 
 def CheckBalance():
     global balances
@@ -228,18 +168,7 @@ def CheckBalance():
         balances.append(balanceEnd)
         print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
     except Exception as Ext:
-        sent_from = gmail_user
-        to = ['mrk.main.03@gmail.com']
-        content = str(Ext)
-
-        msg = EmailMessage()
-        msg['Subject'] = "Error in Check Balance process"
-        msg['From'] = sent_from
-        msg['To'] = to
-        
-        msg.set_content(content)
-        server.send_message(msg, from_addr=sent_from, to_addrs=to)
-
+        print(Ext)
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
@@ -250,18 +179,6 @@ def CheckIndicators(Coin):
         CheckPermission('Buy')
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
-
-def ServerMailConnect():
-    global gmail_user, server
-    gmail_user = 'mrk.sender.03@gmail.com'
-    gmail_password = 'wtnipkdbyijsrujz'
-
-    try:
-        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
-        server.ehlo()
-        server.login(gmail_user, gmail_password)
-    except Exception as Ext:
-        print('Something went wrong Email')
 
 def CheckPermission(Operation):
     global Per
@@ -281,7 +198,6 @@ def main():
     for i in range(31415926535):
         for Coin in Coins:
             try:
-                ServerMailConnect()
                 df = getminutedata(Coin+'BUSD', '1m', '10000')
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
@@ -297,17 +213,6 @@ def main():
                 print(df['RSI'][-1], df['Close'][-1], '\n')
             except Exception as Ext:
                 print(Ext)
-                sent_from = gmail_user
-                to = ['mrk.main.03@gmail.com']
-                content = str(Ext)
-
-                msg = EmailMessage()
-                msg['Subject'] = "Error in main process"
-                msg['From'] = sent_from
-                msg['To'] = to
-                
-                msg.set_content(content)
-                server.send_message(msg, from_addr=sent_from, to_addrs=to)
         print('--------------------------')
         time.sleep(60)
 
