@@ -253,7 +253,7 @@ def main():
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
                 df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
                 price = df['Close'][-1]
-
+                ServerMailConnect()
                 CheckIndicators(Coin)
                 
                 CheckTikets(Coin)
