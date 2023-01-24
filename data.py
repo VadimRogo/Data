@@ -18,6 +18,7 @@ CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
 CounterProfitStoch = 1
+CounterOfErrors = 0
 Coins = ["OCEAN", "DAR", "AMP", "DOGE", "GMT"]
 MinNotions = [1, 1, 1, 1, 10]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
@@ -46,6 +47,7 @@ def getminutedata(symbol, interval, lookback):
         frame = frame.astype(float)
         return frame
     except Exception as Ext:
+        MaketxtError('GetData', Ext)
         print(Ext)
 def Buy(Coin, qty, type):
     global price
@@ -63,9 +65,11 @@ def Buy(Coin, qty, type):
         CheckBalance()
         print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
         print(Ext)
+        MaketxtError('Buy', Ext)
+
 def Tiket(symbol, price, qty, type):
     global Tikets
-    sellpriceprofit = price + (price / 100) * 0.25
+    sellpriceprofit = price + (price / 100) * 0.35
     sellpriceloss = price - (price / 100) * 0.40
     Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -103,6 +107,7 @@ def Sell(T, because):
             CheckPermission('Sell')
         except Exception as Ext:
             print(Ext)
+            MaketxtError('Sell', Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             
 def Maketxt(T):
@@ -124,10 +129,19 @@ def Maketxt(T):
 
 
     with open('Data.txt', 'a') as f:
-        f.writelines("Balance start - {}, Balance end of work - {}".format(BalanceBUSDStart, balances[-1]))
-        f.writelines("Was {} deals RSI and {} deals Stoch".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch))
-        f.writelines('kpd of Rsi - {} kpd of Stoch - {}'.format(KpdRSI, KpdStoch))
-        f.writelines("{}, \n".format(T))
+        f.writelines("Balance start - {}, Balance end of work - {}  ".format(BalanceBUSDStart, balances[-1]))
+        f.writelines("Efficency of work {}  ".format(BalanceBUSDStart / balances[-1]))
+        f.writelines("Was {} deals RSI and {} deals Stoch   ".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch))
+        f.writelines("Efficency of Rsi - {} Efficency of Stoch - {} ".format(KpdRSI, KpdStoch))
+        f.writelines("Rsi profit counter - {}, Rsi loss counter - {}, Stoch profit counter - {}, Stoch loss counter - {}".format(CounterProfitRSI, CounterLossRSI, CounterProfitStoch, CounterLossStoch))
+
+def MaketxtError(Where, Ext):
+    global CounterOfErrors 
+    CounterOfErrors += 1    
+    with open('Errors.txt', 'a') as f:
+        f.writelines("Error in {}, {}".format(Where, Ext))
+
+        
 
 def CheckTikets(Coin):
     for j in Tikets:
@@ -150,15 +164,16 @@ def stoch(Coin):
         fastk, fastd = talib.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
         f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
                 
-        if False in Per and fastk[-1] > 80 and fastk[-1] < 90:
+        if False in Per and fastk[-1] > 10 and fastk[-1] < 20:
             print('Stoch trying to buy')
-            Buy(Coin, 10, 'Stoch')
+            Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
             print('Bouth')
             CheckPermission('Buy')
-        if fastk[-1] > 80 and fastk[-1] < 90:
+        if fastk[-1] > 10 and fastk[-1] < 20:
             CounterOfChances += 1
 
     except Exception as Ext:
+        MaketxtError('Stoch', Ext)
         print(Ext)
 
 def CheckBalance():
@@ -169,6 +184,8 @@ def CheckBalance():
         print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
     except Exception as Ext:
         print(Ext)
+        MaketxtError('Balance', Ext)
+
 def CheckIndicators(Coin):
     global CounterOfChances
     price = df['Close'][-1]
@@ -213,6 +230,7 @@ def main():
                 print(df['RSI'][-1], df['Close'][-1], '\n')
             except Exception as Ext:
                 print(Ext)
+                MaketxtError('Main', Ext)
         print('--------------------------')
         time.sleep(60)
 
