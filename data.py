@@ -54,7 +54,7 @@ def getminutedata(symbol, interval, lookback):
         print(Ext)
 
 def SendMail(Where, Ext):
-    sent_from = gmail_user
+    sent_from = "mrk.sender.02@gmail.com"
     to = ['mrk.main.03@gmail.com']
     content = str(Ext)
 
