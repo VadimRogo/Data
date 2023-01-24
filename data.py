@@ -239,7 +239,6 @@ def ServerMailConnect():
         server.ehlo()
         server.login(gmail_user, gmail_password)
     except Exception as Ext:
-        MaketxtError('Postmail', Ext)
         print('Something went wrong Email')
             
 
