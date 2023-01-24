@@ -7,13 +7,15 @@ import numpy as np
 import time, sys, os
 import requests, math
 import smtplib
+from Keys import SECRET, KEY, KEYMAIL
 from datetime import datetime
 from email.message import EmailMessage
 from talib import stream
 
 
-key_client = 'OIOP5aA2mZVQ9om2ZVdV5MdO7UnxXPM4n5DTL0QmVQMmbhNZxb3g9F4NaaoghnyW'
-secret = 'OvsYPIeQfh5Cz4QgzVSKwRZe8HpQOQqjWzZBugmiAqyQxYuIpJSIK6XfKCvhTCYK'
+key_client = KEY
+secret = SECRET
+key_mail = KEYMAIL
 CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
@@ -48,7 +50,22 @@ def getminutedata(symbol, interval, lookback):
         return frame
     except Exception as Ext:
         MaketxtError('GetData', Ext)
+        SendMail('Getting Data', Ext)
         print(Ext)
+
+def SendMail(Where, Ext):
+    sent_from = gmail_user
+    to = ['mrk.main.03@gmail.com']
+    content = str(Ext)
+
+    msg = EmailMessage()
+    msg['Subject'] = "Error in {}".format(Where)
+    msg['From'] = sent_from
+    msg['To'] = to
+    
+    msg.set_content(content)
+    server.send_message(msg, from_addr=sent_from, to_addrs=to)
+
 def Buy(Coin, qty, type):
     global price
     try:
@@ -65,6 +82,7 @@ def Buy(Coin, qty, type):
         CheckBalance()
         print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
         print(Ext)
+        SendMail('Buy Process', Ext)
         MaketxtError('Buy', Ext)
 
 def Tiket(symbol, price, qty, type):
@@ -108,6 +126,7 @@ def Sell(T, because):
         except Exception as Ext:
             print(Ext)
             MaketxtError('Sell', Ext)
+            SendMail('Sell process', Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             
 def Maketxt(T):
@@ -164,16 +183,16 @@ def stoch(Coin):
         fastk, fastd = talib.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
         f, fd = stream.STOCHRSI(df["Close"], timeperiod=14, fastk_period=5, fastd_period=3, fastd_matype=0)
                 
-        if False in Per and fastk[-1] > 10 and fastk[-1] < 20:
+        if False in Per and float(fastk[-1]) > 10 and float(fastk[-1]) < 20:
             print('Stoch trying to buy')
-            Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'Stoch')
-            print('Bouth')
+            Buy(Coin, float(math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]), 'Stoch')
             CheckPermission('Buy')
-        if fastk[-1] > 10 and fastk[-1] < 20:
+        if float(fastk[-1]) > 10 and float(fastk[-1]) < 20:
             CounterOfChances += 1
 
     except Exception as Ext:
         MaketxtError('Stoch', Ext)
+        SendMail('Stoch indicator', Ext)
         print(Ext)
 
 def CheckBalance():
@@ -184,6 +203,7 @@ def CheckBalance():
         print('Balance in start - {}, Balance in End - {}, percents - {}'.format(BalanceBUSDStart, balanceEnd, float(BalanceBUSDStart) / float(balanceEnd)))
     except Exception as Ext:
         print(Ext)
+        SendMail('Check balance process', Ext)
         MaketxtError('Balance', Ext)
 
 def CheckIndicators(Coin):
@@ -209,6 +229,19 @@ def CheckPermission(Operation):
             if Per[x] == True:
                 Per[x] = False
                 break
+def ServerMailConnect():
+    global gmail_user, server
+    gmail_user = 'mrk.sender.02@gmail.com'
+    gmail_password = key_mail
+
+    try:
+        server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+        server.ehlo()
+        server.login(gmail_user, gmail_password)
+    except Exception as Ext:
+        MaketxtError('Postmail', Ext)
+        print('Something went wrong Email')
+            
 
 def main():
     global df, price, CounterOfChances
@@ -230,6 +263,7 @@ def main():
                 print(df['RSI'][-1], df['Close'][-1], '\n')
             except Exception as Ext:
                 print(Ext)
+                SendMail('Main process', Ext)
                 MaketxtError('Main', Ext)
         print('--------------------------')
         time.sleep(60)
