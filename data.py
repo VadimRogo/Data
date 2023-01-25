@@ -90,8 +90,8 @@ def Buy(Coin, qty, type):
 
 def Tiket(symbol, price, qty, type):
     global Tikets, CounterJournal
-    sellpriceprofit = price + (price / 100) * 0.35
-    sellpriceloss = price - (price / 100) * 0.40
+    sellpriceprofit = price + (price / 100) * 0.45
+    sellpriceloss = price - (price / 100) * 0.65
     Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
         'symbol' : symbol,
@@ -242,7 +242,7 @@ def CheckIndicators(Coin):
     price = df['Close'][-1]
     stoch(Coin)
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
-    if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1]:
+    if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
 
@@ -254,11 +254,11 @@ def CheckIndicators(Coin):
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 25')
         CheckPermission('Buy')
 
-    if df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1]:
+    if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
-    if df['EMA 10'][-1] + df['EMA 10'][-1] / 250 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 250 < price and df['EMA 10'][-5] > df['Close'][-5]:
+    if df['EMA 10'][-1] + df['EMA 10'][-1] / 1000 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 1000 < price and df['EMA 10'][-5] > df['Close'][-5]:
         CounterOfChances += 1
-    if df['EMA 25'][-1] + df['EMA 25'][-1] / 250 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 250 < price and df['EMA 25'][-5] > df['Close'][-5]:
+    if df['EMA 25'][-1] + df['EMA 25'][-1] / 1000 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 1000 < price and df['EMA 25'][-5] > df['Close'][-5]:
         CounterOfChances += 1
 
 def CheckPermission(Operation):
