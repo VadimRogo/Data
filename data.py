@@ -21,6 +21,7 @@ CounterLossStoch = 1
 CounterLossRSI = 1
 CounterProfitStoch = 1
 CounterOfErrors = 0
+CounterJournal = 0
 Coins = ["OCEAN", "DAR", "AMP", "DOGE", "GMT"]
 MinNotions = [1, 1, 1, 1, 10]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
@@ -86,7 +87,7 @@ def Buy(Coin, qty, type):
         MaketxtError('Buy', Ext)
 
 def Tiket(symbol, price, qty, type):
-    global Tikets
+    global Tikets, CounterJournal
     sellpriceprofit = price + (price / 100) * 0.35
     sellpriceloss = price - (price / 100) * 0.40
     Tik = {    
@@ -102,12 +103,28 @@ def Tiket(symbol, price, qty, type):
     }
     
     Tikets.append(Tik)
+
+    if len(Tikets) % 10 == 0:
+        sent_from = "mrk.sender.02@gmail.com"
+        to = ['mrk.main.03@gmail.com']
+        content = ''
+        CounterJournal += 1
+        for i in Tikets:
+            content += i + '\n'
+
+        msg = EmailMessage()
+        msg['Subject'] = "Tikets journal {}",format(CounterJournal)
+        msg['From'] = sent_from
+        msg['To'] = to
+        
+        msg.set_content(content)
+        server.send_message(msg, from_addr=sent_from, to_addrs=to)
     # print(Tikets)
 
 def Sell(T, because):
     global Tikets
     Balance = client.get_asset_balance(asset=T['symbol'])['free']
-    quantity = float(math.floor(float(Balance) * MinNotions[Coins.index(T['symbol'])]) / MinNotions[Coins.index(T['symbol'])])
+    quantity = float(math.floor(float(Balance) * float(MinNotions[Coins.index(T['symbol'])])) / float(MinNotions[Coins.index(T['symbol'])]))
     Coin = T['symbol']
     if T['sold'] == False:
         try:
