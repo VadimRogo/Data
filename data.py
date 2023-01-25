@@ -58,6 +58,7 @@ def getminutedata(symbol, interval, lookback):
         SendMail('Getting Data', Ext)
         print(Ext)
 
+
 def SendMail(Where, Ext):
     sent_from = "mrk.sender.02@gmail.com"
     to = ['mrk.main.03@gmail.com']
@@ -246,6 +247,10 @@ def CheckIndicators(Coin):
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
 
+    if (False in Per) and df['RSI5'][-1] < 35 :
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
+        CheckPermission('Buy')
+
     if False in Per and df['EMA 10'][-1] + df['EMA 10'][-1] / 1000 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 1000 < price and df['EMA 10'][-5] > df['Close'][-5]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 10')
         CheckPermission('Buy')
@@ -259,6 +264,8 @@ def CheckIndicators(Coin):
     if df['EMA 10'][-1] + df['EMA 10'][-1] / 1000 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 1000 < price and df['EMA 10'][-5] > df['Close'][-5]:
         CounterOfChances += 1
     if df['EMA 25'][-1] + df['EMA 25'][-1] / 1000 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 1000 < price and df['EMA 25'][-5] > df['Close'][-5]:
+        CounterOfChances += 1
+    if df['RSI5'][-1] < 35 :
         CounterOfChances += 1
 
 def CheckPermission(Operation):
@@ -292,6 +299,8 @@ def main():
         for Coin in Coins:
             try:
                 df = getminutedata(Coin+'BUSD', '1m', '10000')
+                df5 = getminutedata(Coin+'BUSD', '5m', '10000')
+                df['RSI5'] = ta.momentum.rsi(df5.Close, window = 14) 
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
                 df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
