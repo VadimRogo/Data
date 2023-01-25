@@ -85,7 +85,7 @@ def Buy(Coin, qty, type):
         Tiket(Coin, price, qty, type)
     except Exception as Ext:
         CheckBalance()
-        print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, type(qty), qty))
+        print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, qty, qty))
         print(Ext)
         SendMail('Buy Process', Ext)
         MaketxtError('Buy', Ext)
