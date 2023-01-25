@@ -143,7 +143,7 @@ def Sell(T, because):
             CheckPermission('Sell')
             T['sold'] = True
             T['soldbecause'] = because
-            Maketxt(str(T))
+            Maketxt(T)
             
         except Exception as Ext:
             print(Ext)
