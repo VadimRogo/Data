@@ -246,11 +246,11 @@ def CheckIndicators(Coin):
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
 
-    if False in Per and df['EMA 10'][-1] + df['EMA 10'][-1] / 250 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 250 < price and df['EMA 10'][-5] > df['Close'][-5]:
+    if False in Per and df['EMA 10'][-1] + df['EMA 10'][-1] / 500 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 500 < price and df['EMA 10'][-5] > df['Close'][-5]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 10')
         CheckPermission('Buy')
     
-    if False in Per and df['EMA 25'][-1] + df['EMA 25'][-1] / 250 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 250 < price and df['EMA 25'][-5] > df['Close'][-5]:
+    if False in Per and df['EMA 25'][-1] + df['EMA 25'][-1] / 500 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 500 < price and df['EMA 25'][-5] > df['Close'][-5]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 25')
         CheckPermission('Buy')
 
