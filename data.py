@@ -140,10 +140,11 @@ def Sell(T, because):
                     type=Client.ORDER_TYPE_MARKET,
                     quantity = quantity
                     )
+            CheckPermission('Sell')
             T['sold'] = True
             T['soldbecause'] = because
-            Maketxt(T)
-            CheckPermission('Sell')
+            Maketxt(str(T))
+            
         except Exception as Ext:
             print(Ext)
             MaketxtError('Sell', Ext)
