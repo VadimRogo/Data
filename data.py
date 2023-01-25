@@ -19,6 +19,10 @@ key_mail = KEYMAIL
 CounterProfitRSI = 1
 CounterLossStoch = 1
 CounterLossRSI = 1
+CounterProfitEMA10 = 1
+CounterLossEMA10 = 1
+CounterProfitEMA25 = 1
+CounterLossEMA25 = 1
 CounterProfitStoch = 1
 CounterOfErrors = 0
 CounterJournal = 0
@@ -147,7 +151,7 @@ def Sell(T, because):
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             
 def Maketxt(T):
-    global CounterProfitRSI, CounterLossRSI, CounterProfitStoch, CounterLossStoch, kpdRSI, KpdStoch
+    global CounterProfitRSI, CounterLossRSI, CounterProfitStoch, CounterLossStoch, kpdRSI, KpdStoch, CounterProfitEMA10, CounterLossEMA10, CounterProfitEMA25, CounterLossEMA25
     CheckBalance()
     
     for T in Tikets:
@@ -159,16 +163,27 @@ def Maketxt(T):
             CounterProfitStoch += 1
         elif T['soldbecause'] == 'loss' and T['type'] == 'Stoch':
             CounterLossStoch += 1
+        if T['soldbecause'] == 'profit' and T['type'] == 'EMA 10':
+            CounterProfitEMA10 += 1
+        elif T['soldbecause'] == 'loss' and T['type'] == 'EMA 10':
+            CounterLossEMA10 += 1
+        if T['soldbecause'] == 'profit' and T['type'] == 'EMA 25':
+            CounterProfitEMA25 += 1
+        elif T['soldbecause'] == 'loss' and T['type'] == 'EMA 25':
+            CounterLossEMA25 += 1
+
 
         KpdRSI = CounterProfitRSI / CounterLossRSI
         KpdStoch = CounterProfitStoch / CounterLossStoch
-
+        KpdEMA10 = CounterProfitEMA10 / CounterLossEMA10
+        KpdEMA25 = CounterProfitEMA25 / CounterLossEMA25 
 
     with open('Data.txt', 'a') as f:
         f.writelines("Balance start - {}, Balance end of work - {}  ".format(BalanceBUSDStart, balances[-1]))
         f.writelines("Efficency of work {}  ".format(BalanceBUSDStart / balances[-1]))
-        f.writelines("Was {} deals RSI and {} deals Stoch   ".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch))
-        f.writelines("Efficency of Rsi - {} Efficency of Stoch - {} ".format(KpdRSI, KpdStoch))
+        f.writelines("Was {} deals RSI and {} deals Stoch and {} deals EMA10 and {} deals EMA25".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch, CounterLossEMA10 + CounterProfitEMA10, CounterLossEMA25 + CounterProfitEMA25))
+        f.writelines("Efficency of Rsi - {} Efficency of Stoch - {} Efficency of EMA10 - {} Efficency of EMA25 - {}".format(KpdRSI, KpdStoch, KpdEMA10, KpdEMA25))
+        f.writelines("EMA10 profit counter - {}, EMA10 loss counter - {}, EMA25 profit counter - {}, EMA25 loss counter - {}".format(CounterProfitEMA10, CounterLossEMA10, CounterProfitEMA25, CounterLossEMA25))
         f.writelines("Rsi profit counter - {}, Rsi loss counter - {}, Stoch profit counter - {}, Stoch loss counter - {}".format(CounterProfitRSI, CounterLossRSI, CounterProfitStoch, CounterLossStoch))
 
 def MaketxtError(Where, Ext):
@@ -231,7 +246,18 @@ def CheckIndicators(Coin):
     if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
+
+    if False in Per and df['EMA 10'][-1] + df['EMA 10'][-1] / 250 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 250 < price and df['EMA 10'][-5] > df['Close'][-5]:
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 10')
+    
+    if False in Per and df['EMA 25'][-1] + df['EMA 25'][-1] / 250 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 250 < price and df['EMA 25'][-5] > df['Close'][-5]:
+        Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 25')
+
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1]:
+        CounterOfChances += 1
+    if df['EMA 10'][-1] + df['EMA 10'][-1] / 250 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 250 < price and df['EMA 10'][-5] > df['Close'][-5]:
+        CounterOfChances += 1
+    if df['EMA 25'][-1] + df['EMA 25'][-1] / 250 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 250 < price and df['EMA 25'][-5] > df['Close'][-5]:
         CounterOfChances += 1
 
 def CheckPermission(Operation):
@@ -268,7 +294,10 @@ def main():
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
                 df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
+                df['EMA 10'] = talib.ema(df['Close'], 10)
+                df['EMA 25'] = talib.ema(df['Close'], 25)
                 price = df['Close'][-1]
+                
                 ServerMailConnect()
                 CheckIndicators(Coin)
                 
