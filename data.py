@@ -257,8 +257,6 @@ def CheckIndicators(Coin):
 
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
-    if df['EMA 10'][-1] + df['EMA 10'][-1] / 1000 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 1000 < price and df['EMA 10'][-5] > df['Close'][-5]:
-        CounterOfChances += 1
     if df['EMA 25'][-1] + df['EMA 25'][-1] / 1000 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 1000 < price and df['EMA 25'][-5] > df['Close'][-5]:
         CounterOfChances += 1
     if df['RSI5'][-1] < 35 :
