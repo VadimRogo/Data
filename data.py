@@ -84,8 +84,6 @@ def Buy(Coin, qty, type):
                 )
         Tiket(Coin, price, qty, type)
     except Exception as Ext:
-        CheckBalance()
-        print("Error in buy process, because {}, type of qty {}, qty is {}".format(Ext, qty, qty))
         print(Ext)
         SendMail('Buy Process', Ext)
         MaketxtError('Buy', Ext)
@@ -250,9 +248,11 @@ def CheckIndicators(Coin):
 
     if False in Per and df['EMA 10'][-1] + df['EMA 10'][-1] / 250 > price and  df['EMA 10'][-1] - df['EMA 10'][-1] / 250 < price and df['EMA 10'][-5] > df['Close'][-5]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 10')
+        CheckPermission('Buy')
     
     if False in Per and df['EMA 25'][-1] + df['EMA 25'][-1] / 250 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 250 < price and df['EMA 25'][-5] > df['Close'][-5]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 25')
+        CheckPermission('Buy')
 
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1]:
         CounterOfChances += 1
