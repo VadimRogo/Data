@@ -295,8 +295,8 @@ def main():
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
                 df['SMA 25'] = talib.SMA(df['Close'].values,timeperiod = 25)
                 df['SMA 75'] = talib.SMA(df['Close'].values,timeperiod = 75)
-                df['EMA 10'] = talib.ema(df['Close'], 10)
-                df['EMA 25'] = talib.ema(df['Close'], 25)
+                df['EMA 10'] = talib.EMA(df['Close'], 10)
+                df['EMA 25'] = talib.EMA(df['Close'], 25)
                 price = df['Close'][-1]
                 
                 ServerMailConnect()
@@ -315,6 +315,7 @@ def main():
         time.sleep(60)
 
 try:
+    ServerMailConnect()
     main()
 except KeyboardInterrupt:
     print('Interrupted')
