@@ -26,10 +26,11 @@ CounterLossEMA25 = 1
 CounterProfitStoch = 1
 CounterOfErrors = 0
 CounterJournal = 0
+kpdRSI = 0
 RealCounterOfChances = 0
 Coins = ["BTC", "DAR", "ETH", "DOGE", "DASH", "LINK"]
 MinNotions = [100000, 1, 10000, 1, 1000, 100]
-Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
+
 try:
     client = Client(key_client, secret)
     balanceStart = client.get_asset_balance(asset='BUSD')['free']
@@ -145,11 +146,20 @@ def Sell(T, because):
                 CheckPermission('Sell')
                 CheckPermission('Sell')
                 CheckPermission('Sell')
+                for j in Tikets:
+                    if j['symbol'] == T['symbol']:
+                        j['sold'] = True 
             if float(Balance) > 30 / float(T['price']):
                 CheckPermission('Sell')
                 CheckPermission('Sell')
+                for j in Tikets:
+                    if j['symbol'] == T['symbol']:
+                        j['sold'] = True 
             if float(Balance) > 20 / float(T['price']):
                 CheckPermission('Sell')
+                for j in Tikets:
+                    if j['symbol'] == T['symbol']:
+                        j['sold'] = True 
                 
             
 
@@ -160,7 +170,8 @@ def Sell(T, because):
         except Exception as Ext:
             print(Ext)
             MaketxtError('Sell', Ext)
-            SendMail('Sell process Coin - {} \n Error - '.format(T['symbol'], Ext))
+            print('Quantity we tried to sell - ', quantity, 'Min notional - ', MinNotions[Coins.index(T['symbol'])])
+            SendMail('Sell process Coin1 - {} \n Error - '.format(T['symbol'], Ext), Ext)
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             
 def Maketxt(T):
@@ -313,7 +324,7 @@ def main():
     for i in range(31415926535):
         for Coin in Coins:
             try:
-                df = getminutedata(Coin+'BUSD', '1m', '10000')
+                df = getminutedata(Coin+'BUSD', '5m', '10000')
                 df5 = getminutedata(Coin+'BUSD', '5m', '10000')
                 df['RSI5'] = ta.momentum.rsi(df5.Close, window = 14) 
                 df['RSI'] = ta.momentum.rsi(df.Close, window = 14)
