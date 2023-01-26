@@ -26,8 +26,8 @@ CounterLossEMA25 = 1
 CounterProfitStoch = 1
 CounterOfErrors = 0
 CounterJournal = 0
-Coins = ["OCEAN", "DAR", "AMP", "DOGE", "GMT"]
-MinNotions = [1, 1, 1, 1, 10]
+Coins = ["BTC", "DAR", "ETH", "DOGE", "DASH", "LINK"]
+MinNotions = [10000, 10000, 10000, 1, 1000, 100]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
 try:
     client = Client(key_client, secret)
@@ -141,8 +141,8 @@ def Sell(T, because):
                     )
             CheckPermission('Sell')
             T['sold'] = True
-            T['soldbecause'] = because
-            Maketxt(T)
+            # T['soldbecause'] = because
+            # Maketxt(T)
             
         except Exception as Ext:
             print(Ext)
