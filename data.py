@@ -26,6 +26,7 @@ CounterLossEMA25 = 1
 CounterProfitStoch = 1
 CounterOfErrors = 0
 CounterJournal = 0
+RealCounterOfChances = 0
 Coins = ["BTC", "DAR", "ETH", "DOGE", "DASH", "LINK"]
 MinNotions = [100000, 1, 10000, 1, 1000, 100]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
@@ -218,7 +219,7 @@ def CheckTikets(Coin):
                 CheckBalance()
 
 def stoch(Coin):
-    global CounterOfChances
+    global CounterOfChances, RealCounterOfChances
     try: 
         sma = talib.SMA(df["Close"], timeperiod=14)
         latest = stream.SMA(df["Close"], timeperiod=14)
@@ -231,6 +232,8 @@ def stoch(Coin):
             print('Stoch trying to buy')
             Buy(Coin, float(math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)]), 'Stoch')
             CheckPermission('Buy')
+            RealCounterOfChances +=1
+            CounterOfChances += 1
         if float(fastk[-1]) > 10 and float(fastk[-1]) < 20:
             CounterOfChances += 1
 
@@ -251,21 +254,27 @@ def CheckBalance():
         MaketxtError('Balance', Ext)
 
 def CheckIndicators(Coin):
-    global CounterOfChances
+    global CounterOfChances, RealCounterOfChances
     price = df['Close'][-1]
     stoch(Coin)
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
     if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
+        RealCounterOfChances += 1
+        CounterOfChances += 1
 
     if (False in Per) and df['RSI5'][-1] < 35 :
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
+        RealCounterOfChances += 1
+        CounterOfChances += 1
 
     if False in Per and df['EMA 25'][-1] + df['EMA 25'][-1] / 1000 > price and  df['EMA 25'][-1] - df['EMA 25'][-1] / 1000 < price and df['EMA 25'][-5] > df['Close'][-5]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'EMA 25')
         CheckPermission('Buy')
+        RealCounterOfChances += 1
+        CounterOfChances += 1
 
     if df['RSI'][-1] < 35 and df['SMA 25'][-1] > df['SMA 75'][-1]:
         CounterOfChances += 1
@@ -320,7 +329,7 @@ def main():
                 CheckTikets(Coin)
 
                 print(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)])
-                print('Cycle number - ', i, 'Chances - ', CounterOfChances)
+                print('Cycle number - ', i, 'Chances - ', CounterOfChances, 'Real Chances - ', RealCounterOfChances)
                 print(df['RSI'][-1], df['Close'][-1], '\n')
             except Exception as Ext:
                 print(Ext)
