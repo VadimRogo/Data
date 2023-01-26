@@ -1,1 +1,0 @@
-Error in GetData, HTTPSConnectionPool(host='api.binance.com', port=443): Read timed out. (read timeout=10)
