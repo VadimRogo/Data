@@ -27,7 +27,7 @@ CounterProfitStoch = 1
 CounterOfErrors = 0
 CounterJournal = 0
 Coins = ["BTC", "DAR", "ETH", "DOGE", "DASH", "LINK"]
-MinNotions = [10000, 10000, 10000, 1, 1000, 100]
+MinNotions = [10000, 1, 10000, 1, 1000, 100]
 Qty = [31, 60, 2151, 6.1, 0.118, 0.072, 64.2, 3034, 208.49, 1.96, 3169, 3.8, 3.1, 117]
 try:
     client = Client(key_client, secret)
