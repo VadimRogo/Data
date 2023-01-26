@@ -140,6 +140,18 @@ def Sell(T, because):
                     quantity = quantity
                     )
             CheckPermission('Sell')
+            if float(Balance) > 40 / float(T['price']):
+                CheckPermission('Sell')
+                CheckPermission('Sell')
+                CheckPermission('Sell')
+            if float(Balance) > 30 / float(T['price']):
+                CheckPermission('Sell')
+                CheckPermission('Sell')
+            if float(Balance) > 20 / float(T['price']):
+                CheckPermission('Sell')
+                
+            
+
             T['sold'] = True
             # T['soldbecause'] = because
             # Maketxt(T)
@@ -147,7 +159,7 @@ def Sell(T, because):
         except Exception as Ext:
             print(Ext)
             MaketxtError('Sell', Ext)
-            SendMail('Sell process', Ext)
+            SendMail('Sell process Coin - {} \n Error - '.format(T['symbol'], Ext))
             ReallyBalance = float(client.get_asset_balance(asset=T['symbol'])['free'])
             
 def Maketxt(T):
