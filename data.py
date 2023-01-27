@@ -142,13 +142,6 @@ def Sell(T, because):
                     quantity = quantity
                     )
             CheckPermission('Sell')
-            if float(Balance) > 40 / float(T['price']):
-                CheckPermission('Sell')
-                CheckPermission('Sell')
-                CheckPermission('Sell')
-                for j in Tikets:
-                    if j['symbol'] == T['symbol']:
-                        j['sold'] = True 
             if float(Balance) > 30 / float(T['price']):
                 CheckPermission('Sell')
                 CheckPermission('Sell')
