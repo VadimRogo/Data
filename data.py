@@ -297,12 +297,12 @@ def CheckIndicators(Coin):
 def CheckPermission(Operation):
     global Per
     if Operation == 'Buy':
-        for x in range(4):
+        for x in range(3):
             if Per[x] == False:
                 Per[x] = True
                 break
     elif Operation == 'Sell':
-        for x in range(4):
+        for x in range(3):
             if Per[x] == True:
                 Per[x] = False
                 break
