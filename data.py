@@ -195,7 +195,7 @@ def Maketxt(T):
         KpdEMA10 = CounterProfitEMA10 / CounterLossEMA10
         KpdEMA25 = CounterProfitEMA25 / CounterLossEMA25 
 
-    with open('Data.txt', 'a') as f:
+    with open('Data.txt', 'w') as f:
         f.writelines("Balance start - {}, Balance end of work - {}  ".format(BalanceBUSDStart, balances[-1]))
         f.writelines("Efficency of work {}  ".format(BalanceBUSDStart / balances[-1]))
         f.writelines("Was {} deals RSI and {} deals Stoch and {} deals EMA10 and {} deals EMA25".format(CounterLossRSI + CounterProfitRSI, CounterProfitStoch + CounterLossStoch, CounterLossEMA10 + CounterProfitEMA10, CounterLossEMA25 + CounterProfitEMA25))
