@@ -93,7 +93,7 @@ def Buy(Coin, qty, type):
 
 def Tiket(symbol, price, qty, type):
     global Tikets, CounterJournal
-    sellpriceprofit = price + (price / 100) * 0.14
+    sellpriceprofit = price + (price / 100) * 0.3
     sellpriceloss = price - (price / 100) * 0.3
     Tik = {    
         'time' : datetime.now().strftime("%Y-%m-%d %H:%M"),
@@ -262,13 +262,13 @@ def CheckIndicators(Coin):
     price = df['Close'][-1]
     stoch(Coin)
     print('SMA 25 = ', math.floor(df['SMA 25'][-1] * 1000) / 1000, 'SMA 75 = ', math.floor(df['SMA 75'][-1] * 1000) / 1000)
-    if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1]:
+    if (False in Per) and df['RSI'][-1] < 35 and df['SMA 25'][-1] < df['SMA 75'][-1] and df['SMA 25'][-10] < df['SMA 75'][-10]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
         RealCounterOfChances += 1
         CounterOfChances += 1
 
-    if (False in Per) and df['RSI5'][-1] < 35 :
+    if (False in Per) and df['RSI5'][-1] < 35 and df['SMA 25'][-14] < df['SMA 75'][-14]:
         Buy(Coin, math.floor(11 / price * MinNotions[Coins.index(Coin)]) / MinNotions[Coins.index(Coin)], 'RSI')
         CheckPermission('Buy')
         RealCounterOfChances += 1
